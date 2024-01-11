@@ -1,7 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.repo.NextUpCustomerRepository;
-import io.github.redtape9.nextupmanager.backend.model.Customers;
+import io.github.redtape9.nextupmanager.backend.model.Customer;
 import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,26 +13,26 @@ import java.util.Optional;
 public class NextUpCustomerService {
     private final NextUpCustomerRepository nextUpCustomerRepository;
 
-    public List<Customers> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         return nextUpCustomerRepository.findAll();
     }
 
-    public Optional<Customers> getCustomerById(String id) {
+    public Optional<Customer> getCustomerById(String id) {
         return nextUpCustomerRepository.findById(id);
     }
 
-    public Customers createCustomer(Customers customer) {
+    public Customer createCustomer(Customer customer) {
         return nextUpCustomerRepository.save(customer);
     }
 
-    public Customers updateCustomer(String id, CustomerUpdateDTO updateDTO) {
-        Customers customer = nextUpCustomerRepository.findById(id)
+    public Customer updateCustomer(String id, CustomerUpdateDTO updateDTO) {
+        Customer customer = nextUpCustomerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
         updateCustomerWithDTO(customer, updateDTO);
         return nextUpCustomerRepository.save(customer);
     }
 
-    private void updateCustomerWithDTO(Customers customer, CustomerUpdateDTO updateDTO) {
+    private void updateCustomerWithDTO(Customer customer, CustomerUpdateDTO updateDTO) {
         customer.setDepartmentId(updateDTO.getDepartmentId());
         customer.setStatusHistory(updateDTO.getStatusHistory());
         customer.setCurrentStatus(updateDTO.getCurrentStatus());
@@ -44,4 +44,7 @@ public class NextUpCustomerService {
         nextUpCustomerRepository.deleteById(id);
     }
 
+    public List<Customer> getCustomersByDepartment(String departmentId) {
+        return nextUpCustomerRepository.findByDepartmentId(departmentId);
+    }
 }

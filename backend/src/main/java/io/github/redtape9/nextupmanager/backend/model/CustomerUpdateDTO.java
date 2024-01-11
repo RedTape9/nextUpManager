@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class CustomerUpdateDTO {
     private String departmentId;  // optional, falls sie geändert werden soll
-    private List<Customers.StatusChange> statusHistory;
+    private List<Customer.StatusChange> statusHistory;
     private CustomerStatus currentStatus;
     private String employeeId;
     private String commentByEmployee;

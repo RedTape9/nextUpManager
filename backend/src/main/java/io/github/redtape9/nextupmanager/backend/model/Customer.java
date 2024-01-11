@@ -8,8 +8,8 @@ import java.util.Date;
 
 
 @Data
-@Document
-public class Customers {
+@Document(collection = "customers")
+public class Customer {
     @Id
     private String id;
     private String departmentId;

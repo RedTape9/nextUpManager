@@ -1,9 +1,10 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.model.Customers;
+import io.github.redtape9.nextupmanager.backend.model.Customer;
 import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
 import io.github.redtape9.nextupmanager.backend.service.NextUpCustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,30 +18,56 @@ public class NextUpCustomerController {
 
 
     @PostMapping
-    public Customers createCustomer(@RequestBody Customers customer) {
-        return customerService.createCustomer(customer);
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+        if(customer.getDepartmentId() == null) {
+            throw new IllegalArgumentException("DepartmentId darf nicht null sein");
+        }
+        if(isValidCustomer(customer)) {
+            Customer createdCustomer = customerService.createCustomer(customer);
+            return ResponseEntity.ok(createdCustomer);
+        } else {
+            throw new IllegalArgumentException("Kundeneingaben sind nicht valide");
+        }
 
     }
 
+    private boolean isValidCustomer(Customer customer) {
+        return customer.getDepartmentId() != null && customer.getCurrentStatus() != null;
+    }
+
     @GetMapping
-    public List<Customers> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping("/{id}")
-    public Customers getCustomerById(@PathVariable String id) {
+    public Customer getCustomerById(@PathVariable String id) {
         return customerService.getCustomerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
     }
 
+    @GetMapping("/department/{departmentId}")
+    public List<Customer> getCustomersByDepartment(@PathVariable String departmentId) {
+        return customerService.getCustomersByDepartment(departmentId);
+    }
+
     @PutMapping("/{id}")
-    public Customers updateCustomer(@PathVariable String id, @RequestBody CustomerUpdateDTO updateDTO) {
-        return customerService.updateCustomer(id, updateDTO);
+    public ResponseEntity<Customer> updateCustomer(@PathVariable String id, @RequestBody CustomerUpdateDTO updateDTO) {
+        if(isValidCustomerUpdateDTO(updateDTO)) {
+            Customer updatedCustomer = customerService.updateCustomer(id, updateDTO);
+            return ResponseEntity.ok(updatedCustomer);
+        } else {
+            throw new IllegalArgumentException("Kundeneingaben sind nicht valide");
+        }
+    }
+
+    private boolean isValidCustomerUpdateDTO(CustomerUpdateDTO updateDTO) {
+        return updateDTO.getCurrentStatus() != null;
     }
 
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable String id) {
-        Optional<Customers> customerOptional = customerService.getCustomerById(id);
+        Optional<Customer> customerOptional = customerService.getCustomerById(id);
         if (customerOptional.isPresent()) {
             customerService.deleteCustomer(id);
         } else {
