@@ -9,17 +9,16 @@ import java.util.Date;
 
 @Data
 @Document
-public class NextUpCustomer {
+public class Customers {
     @Id
     private String id;
     private String departmentId;
-    private int number;
     private List<StatusChange> statusHistory;
     private CustomerStatus currentStatus;
     private Date createdAt;
     private String employeeId;
-    private String comment;
-
+    private String commentByEmployee;
+    private int counter;
     @Data
     public static class StatusChange {
         private CustomerStatus status;

@@ -1,11 +1,13 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.model.NextUpCustomer;
+import io.github.redtape9.nextupmanager.backend.model.Customers;
+import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
 import io.github.redtape9.nextupmanager.backend.service.NextUpCustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -13,35 +15,38 @@ import java.util.List;
 public class NextUpCustomerController {
     private final NextUpCustomerService customerService;
 
+
     @PostMapping
-    public NextUpCustomer createCustomer(@RequestBody NextUpCustomer customer) {
-        return customerService.createOrUpdateCustomer(customer);
+    public Customers createCustomer(@RequestBody Customers customer) {
+        return customerService.createCustomer(customer);
 
     }
 
-
-
     @GetMapping
-    public List<NextUpCustomer> getAllCustomers() {
+    public List<Customers> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping("/{id}")
-    public NextUpCustomer getCustomerById(@PathVariable String id) {
-        return customerService.getCustomerById(id).orElseThrow();
+    public Customers getCustomerById(@PathVariable String id) {
+        return customerService.getCustomerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
     }
 
     @PutMapping("/{id}")
-    public NextUpCustomer updateCustomer(@PathVariable String id, @RequestBody NextUpCustomer customer) {
-        return customerService.createOrUpdateCustomer(customer);
+    public Customers updateCustomer(@PathVariable String id, @RequestBody CustomerUpdateDTO updateDTO) {
+        return customerService.updateCustomer(id, updateDTO);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable String id) {
-        customerService.deleteCustomer(id);
+        Optional<Customers> customerOptional = customerService.getCustomerById(id);
+        if (customerOptional.isPresent()) {
+            customerService.deleteCustomer(id);
+        } else {
+            throw new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden");
+        }
     }
-
-
 
 
 }
