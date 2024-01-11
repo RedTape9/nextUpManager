@@ -31,6 +31,16 @@ public class NextUpCustomerController {
         return customerService.getCustomerById(id).orElseThrow();
     }
 
+    @PutMapping("/{id}")
+    public NextUpCustomer updateCustomer(@PathVariable String id, @RequestBody NextUpCustomer customer) {
+        return customerService.createOrUpdateCustomer(customer);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
+    }
+
 
 
 
