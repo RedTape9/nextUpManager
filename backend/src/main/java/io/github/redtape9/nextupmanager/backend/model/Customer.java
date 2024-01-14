@@ -13,16 +13,17 @@ public class Customer {
     @Id
     private String id;
     private String departmentId;
+    private String customerNr;
     private List<StatusChange> statusHistory;
     private CustomerStatus currentStatus;
-    private Date createdAt;
+    private String createdAt;
     private String employeeId;
+    private String room;
     private String commentByEmployee;
-    private int counter;
     @Data
     public static class StatusChange {
         private CustomerStatus status;
-        private Date timestamp;
+        private String timestamp;
     }
 
 }

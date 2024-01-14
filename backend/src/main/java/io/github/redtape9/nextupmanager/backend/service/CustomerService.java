@@ -1,6 +1,10 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
-import io.github.redtape9.nextupmanager.backend.repo.NextUpCustomerRepository;
+import io.github.redtape9.nextupmanager.backend.model.Department;
+import io.github.redtape9.nextupmanager.backend.model.Employee;
+import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
+import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
+import io.github.redtape9.nextupmanager.backend.repo.CustomerRepository;
 import io.github.redtape9.nextupmanager.backend.model.Customer;
 import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +14,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class NextUpCustomerService {
-    private final NextUpCustomerRepository nextUpCustomerRepository;
+public class CustomerService {
+    private final CustomerRepository nextUpCustomerRepository;
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
 
     public List<Customer> getAllCustomers() {
         return nextUpCustomerRepository.findAll();
@@ -47,4 +53,15 @@ public class NextUpCustomerService {
     public List<Customer> getCustomersByDepartment(String departmentId) {
         return nextUpCustomerRepository.findByDepartmentId(departmentId);
     }
+
+
+    public Department getDepartmentByName(String name) {
+        return departmentRepository.findByName(name);
+    }
+
+    public Department updateDepartment(Department department) {
+        return departmentRepository.save(department);
+    }
+
+
 }
