@@ -14,7 +14,14 @@ public class DepartmentService {
         return departmentRepository.findByName(name);
     }
 
-    public void updateDepartment(Department department) {
-        departmentRepository.save(department);
+    public Department updateDepartment(Department updatedData) {
+        return departmentRepository.findById(updatedData.getId())
+                .map(department -> {
+                    department.setName(updatedData.getName());
+                    department.setPrefix(updatedData.getPrefix());
+                    department.setCurrentNumber(updatedData.getCurrentNumber());
+                    return departmentRepository.save(department);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Department with id: " + updatedData.getId() + " not found"));
     }
 }

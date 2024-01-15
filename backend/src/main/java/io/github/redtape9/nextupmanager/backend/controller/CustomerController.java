@@ -38,6 +38,7 @@ public class CustomerController {
         if (department == null) {
             throw new IllegalArgumentException("Department with name: " + name + " does not exist");
         }
+        String depId = department.getId();
 
         // Set the departmentId, createdAt, currentStatus, and customerNr
         customer.setDepartmentId(department.getId());
@@ -54,17 +55,19 @@ public class CustomerController {
         // Save the new customer in the database
         Customer createdCustomer = customerService.createCustomer(customer);
 
-        // Update the currentNumber in the department
-        department.setCurrentNumber(department.getCurrentNumber() + 1);
-        departmentService.updateDepartment(department);
+        // Update the currentNumber in the department where depID = id of the department
+       if(department.getId().equals(depId)) {
+            department.setCurrentNumber(department.getCurrentNumber() + 1);
+            //departmentService.updateDepartment(depId, department);
+           departmentService.updateDepartment(department);
+        }
+       else {
+           throw new IllegalArgumentException("Department with id: " + depId + " not found");
+       }
 
         return ResponseEntity.ok(createdCustomer);
     }
 
-
-    private boolean isValidCustomer(Customer customer) {
-        return customer.getDepartmentId() != null && customer.getCurrentStatus() != null;
-    }
 
     @GetMapping
     public List<Customer> getAllCustomers() {
