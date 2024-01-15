@@ -11,6 +11,8 @@ public class CustomerUpdateDTO {
     private CustomerStatus currentStatus;
     private String employeeId;
     private String commentByEmployee;
+    private String room;
+    private String customerNr;
 
     @Data
     public static class StatusChangeDTO {
