@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
-public class CustomerController {
+public class Controller {
     private final CustomerService customerService;
     private final DepartmentService departmentService;
 
@@ -74,10 +74,13 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable String id) {
-        return customerService.getCustomerById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
+    @GetMapping("department/{name}")
+    public List<Customer> getCustomersByDepartmentName(@PathVariable String name) {
+        Department department = departmentService.getDepartmentByName(name);
+        if (department == null) {
+            throw new IllegalArgumentException("Department with name: " + name + " does not exist");
+        }
+        return customerService.getCustomersByDepartment(department.getId());
     }
 
     @GetMapping("/department/{departmentId}")
