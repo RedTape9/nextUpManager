@@ -55,18 +55,18 @@ public class Controller {
         // Save the new customer in the database
         Customer createdCustomer = customerService.createCustomer(customer);
 
-        // Update the currentNumber in the department where depID = id of the department
-       if(department.getId().equals(depId)) {
+        // Update the currentNumber in the department wo die depID = id in department ist
+        if(department.getId().equals(depId)) {
             department.setCurrentNumber(department.getCurrentNumber() + 1);
-            //departmentService.updateDepartment(depId, department);
-           departmentService.updateDepartment(department);
+            departmentService.updateDepartment(depId, department);
         }
-       else {
-           throw new IllegalArgumentException("Department with id: " + depId + " not found");
-       }
+        else {
+            throw new IllegalArgumentException("Department with id: " + depId + " not found");
+        }
 
         return ResponseEntity.ok(createdCustomer);
     }
+
 
 
     @GetMapping
