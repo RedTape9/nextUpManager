@@ -11,5 +11,5 @@ public class Department {
     private String id;
     private String name;
     private String prefix;
-    private int currentNumber;
+    private String employeeId;
 }

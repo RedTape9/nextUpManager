@@ -1,6 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.model;
 
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Date;
 
@@ -17,6 +19,6 @@ public class CustomerUpdateDTO {
     @Data
     public static class StatusChangeDTO {
         private CustomerStatus status;
-        private Date timestamp;
+        private LocalDateTime timestamp;
     }
 }

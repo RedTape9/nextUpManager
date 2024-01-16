@@ -7,6 +7,7 @@ import io.github.redtape9.nextupmanager.backend.model.CustomerStatus;
 import io.github.redtape9.nextupmanager.backend.service.CustomerService;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,18 +18,9 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
-public class Controller {
+public class CustomerController {
     private final CustomerService customerService;
     private final DepartmentService departmentService;
-
-
-    private static String getFormattedDateTime() {
-
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        // Datum und Uhrzeit im ISO-8601-Format formatieren und zurückgeben
-        return now.format(formatter);
-    }
 
 
 
@@ -36,7 +28,8 @@ public class Controller {
 // ... (andere Methoden und Hilfsfunktionen) ...
 
     @PostMapping("/department/{name}")
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer, @PathVariable String name) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Customer createCustomer(@RequestBody Customer customer, @PathVariable String name) {
         // Abteilung basierend auf dem Namen holen
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
@@ -45,7 +38,7 @@ public class Controller {
 
         // Kundeninformationen setzen
         customer.setDepartmentId(department.getId());
-        customer.setCreatedAt(getFormattedDateTime());
+        customer.setCreatedAt(LocalDateTime.now());
         customer.setCurrentStatus(CustomerStatus.WAITING);
         customer.setCustomerNr(department.getPrefix() + (department.getCurrentNumber() + 1));
 
@@ -62,7 +55,7 @@ public class Controller {
         department.setCurrentNumber(department.getCurrentNumber() + 1);
         departmentService.updateDepartmentByName(department.getName(), department);
 
-        return ResponseEntity.ok(createdCustomer);
+        return createdCustomer;
     }
 
     @GetMapping
