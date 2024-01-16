@@ -14,18 +14,33 @@ public class DepartmentService {
         return departmentRepository.findByName(name);
     }
 
-    public Department updateDepartment(String id,Department updatedData) {
-        Department department = departmentRepository.findById(id)
+    public Department updateDepartmentByName(String name, Department updatedDepartmentData) {
+        Department existingDepartment = departmentRepository.findByName(name);
+        if (existingDepartment == null) {
+            throw new IllegalArgumentException("Department mit dem Namen: " + name + " nicht gefunden");
+        }
+
+        // Aktualisieren der vorhandenen Department-Daten mit den neuen Daten
+        updateDepartmentData(existingDepartment, updatedDepartmentData);
+
+        // Speichern des aktualisierten Departments
+        return departmentRepository.save(existingDepartment);
+    }
+
+    private void updateDepartmentData(Department existingDepartment, Department updatedDepartmentData) {
+        // Hier übernehmen Sie die relevanten Daten von updatedDepartmentData
+        // Beispiel: existingDepartment.setPrefix(updatedDepartmentData.getPrefix());
+        // Fügen Sie hier weitere Feldaktualisierungen hinzu
+        existingDepartment.setCurrentNumber(updatedDepartmentData.getCurrentNumber());
+        // Fügen Sie zusätzliche Aktualisierungen basierend auf Ihren Anforderungen hinzu
+    }
+
+    /*    public Department getDepartmentById(String id) {
+        return departmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Abteilung mit der id: " + id + " nicht gefunden"));
-        updateDepartmentWithDTO(department, updatedData);
-        return departmentRepository.save(department);
-    }
-
-    private void updateDepartmentWithDTO(Department existingDepartment, Department updatedData) {
-        existingDepartment.setName(updatedData.getName());
-        existingDepartment.setPrefix(updatedData.getPrefix());
-        existingDepartment.setCurrentNumber(updatedData.getCurrentNumber());
-    }
-
-
+    }*/
 }
+
+
+
+

@@ -22,7 +22,7 @@ public class Controller {
     private final DepartmentService departmentService;
 
 
-    public static String getFormattedDateTime() {
+    private static String getFormattedDateTime() {
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -31,43 +31,39 @@ public class Controller {
     }
 
 
+
+
+// ... (andere Methoden und Hilfsfunktionen) ...
+
     @PostMapping("/department/{name}")
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer, @PathVariable String name) {
-        // Get the department based on the name
+        // Abteilung basierend auf dem Namen holen
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
             throw new IllegalArgumentException("Department with name: " + name + " does not exist");
         }
-        String depId = department.getId();
 
-        // Set the departmentId, createdAt, currentStatus, and customerNr
+        // Kundeninformationen setzen
         customer.setDepartmentId(department.getId());
         customer.setCreatedAt(getFormattedDateTime());
         customer.setCurrentStatus(CustomerStatus.WAITING);
         customer.setCustomerNr(department.getPrefix() + (department.getCurrentNumber() + 1));
 
-        // Add a new entry in statusHistory
+        // Eintrag in statusHistory hinzufügen
         Customer.StatusChange statusChange = new Customer.StatusChange();
         statusChange.setStatus(CustomerStatus.WAITING);
         statusChange.setTimestamp(customer.getCreatedAt());
         customer.getStatusHistory().add(statusChange);
 
-        // Save the new customer in the database
+        // Neuen Kunden in der Datenbank speichern
         Customer createdCustomer = customerService.createCustomer(customer);
 
-        // Update the currentNumber in the department wo die depID = id in department ist
-        if(department.getId().equals(depId)) {
-            department.setCurrentNumber(department.getCurrentNumber() + 1);
-            departmentService.updateDepartment(depId, department);
-        }
-        else {
-            throw new IllegalArgumentException("Department with id: " + depId + " not found");
-        }
+        // currentNumber in der Abteilung aktualisieren
+        department.setCurrentNumber(department.getCurrentNumber() + 1);
+        departmentService.updateDepartmentByName(department.getName(), department);
 
         return ResponseEntity.ok(createdCustomer);
     }
-
-
 
     @GetMapping
     public List<Customer> getAllCustomers() {
