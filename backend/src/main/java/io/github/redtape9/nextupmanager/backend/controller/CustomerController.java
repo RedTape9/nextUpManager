@@ -1,9 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
 import io.github.redtape9.nextupmanager.backend.model.Customer;
-import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.model.NewCustomerDTO;
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.CustomerStatus;
 import io.github.redtape9.nextupmanager.backend.service.CustomerService;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
@@ -23,9 +22,6 @@ public class CustomerController {
     private final DepartmentService departmentService;
 
 
-
-
-// ... (andere Methoden und Hilfsfunktionen) ...
 
     @PostMapping("/department/{name}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -78,7 +74,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable String id, @RequestBody CustomerUpdateDTO updateDTO) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable String id, @RequestBody NewCustomerDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
             Customer updatedCustomer = customerService.updateCustomer(id, updateDTO);
             return ResponseEntity.ok(updatedCustomer);
@@ -87,7 +83,7 @@ public class CustomerController {
         }
     }
 
-    private boolean isValidCustomerUpdateDTO(CustomerUpdateDTO updateDTO) {
+    private boolean isValidCustomerUpdateDTO(NewCustomerDTO updateDTO) {
         return updateDTO.getCurrentStatus() != null;
     }
 

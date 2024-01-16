@@ -1,12 +1,11 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.Employee;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 import io.github.redtape9.nextupmanager.backend.repo.CustomerRepository;
 import io.github.redtape9.nextupmanager.backend.model.Customer;
-import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.model.NewCustomerDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,14 +30,14 @@ public class CustomerService {
         return nextUpCustomerRepository.save(customer);
     }
 
-    public Customer updateCustomer(String id, CustomerUpdateDTO updateDTO) {
+    public Customer updateCustomer(String id, NewCustomerDTO updateDTO) {
         Customer customer = nextUpCustomerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
         updateCustomerWithDTO(customer, updateDTO);
         return nextUpCustomerRepository.save(customer);
     }
 
-    private void updateCustomerWithDTO(Customer customer, CustomerUpdateDTO updateDTO) {
+    private void updateCustomerWithDTO(Customer customer, NewCustomerDTO updateDTO) {
         customer.setDepartmentId(updateDTO.getDepartmentId());
         customer.setStatusHistory(updateDTO.getStatusHistory());
         customer.setCurrentStatus(updateDTO.getCurrentStatus());
