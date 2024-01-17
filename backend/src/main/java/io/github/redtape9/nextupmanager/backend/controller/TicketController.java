@@ -6,13 +6,11 @@ import io.github.redtape9.nextupmanager.backend.model.Department;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
@@ -22,37 +20,40 @@ public class TicketController {
 
 
 
+    // CREATE
     @PostMapping("/department/{name}")
     public Ticket createTicket(@RequestBody Ticket ticket, @PathVariable String name) {
         return ticketService.createTicketWithDepartment(ticket, name);
     }
 
+    // GET
     @GetMapping
-    public List<Ticket> getAllCustomers() {
+    public List<Ticket> getAllTickets() {
         return ticketService.getAllTickets();
     }
 
+    // GET for select ticket in frontend
     @GetMapping("department/{name}")
     public List<Ticket> getCustomersByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
             throw new IllegalArgumentException("Department with name: " + name + " does not exist");
         }
-        return ticketService.getTicketsByDepartment(department.getId());
+        return ticketService.getAllTicketsByDepartmentId(department.getId());
     }
 
     @GetMapping("/department/{departmentId}")
-    public List<Ticket> getCustomersByDepartment(@PathVariable String departmentId) {
-        return ticketService.getTicketsByDepartment(departmentId);
+    public List<Ticket> getTicketsByDepartment(@PathVariable String departmentId) {
+        return ticketService.getAllTicketsByDepartmentId(departmentId);
     }
 
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> updateCustomer(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
+    public Ticket updateCustomer(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
-            Ticket updatedTicket = ticketService.updateTicket(id, updateDTO);
-            return ResponseEntity.ok(updatedTicket);
+            return ticketService.updateTicket(id, updateDTO);
         } else {
-            throw new IllegalArgumentException("Kundeneingaben sind nicht valide");
+            throw new IllegalArgumentException("Ticketeingaben sind nicht valide");
         }
     }
 

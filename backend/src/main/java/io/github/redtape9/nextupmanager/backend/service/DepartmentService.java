@@ -17,9 +17,6 @@ public class DepartmentService {
 
     public Department updateDepartment(Department department) {
         DepartmentUpdateDTO updateDTO = new DepartmentUpdateDTO();
-        updateDTO.setId(department.getId());
-        updateDTO.setName(department.getName());
-        updateDTO.setPrefix(department.getPrefix());
         updateDTO.setCurrentNumber(department.getCurrentNumber());
         return applyDepartmentUpdate(department, updateDTO);
     }

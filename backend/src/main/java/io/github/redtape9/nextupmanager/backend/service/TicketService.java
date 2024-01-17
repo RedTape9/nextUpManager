@@ -32,6 +32,8 @@ public class TicketService {
         return nextUpTicketRepository.findById(id);
     }
 
+    //CREATE
+
     public Ticket createTicketWithDepartment(Ticket ticket, String departmentName) {
         Department department = departmentRepository.findByName(departmentName);
         if (department == null) {
@@ -49,6 +51,7 @@ public class TicketService {
         ticket.getStatusHistory().add(statusChange);
 
         Ticket createdTicket = nextUpTicketRepository.save(ticket);
+
 
         // Aktualisieren der currentNumber in Department
         department.setCurrentNumber(department.getCurrentNumber() + 1);
@@ -77,7 +80,7 @@ public class TicketService {
         nextUpTicketRepository.deleteById(id);
     }
 
-    public List<Ticket> getTicketsByDepartment(String departmentId) {
+    public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
         return nextUpTicketRepository.findByDepartmentId(departmentId);
     }
 
