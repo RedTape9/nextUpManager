@@ -1,9 +1,11 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
+import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
+import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
 import io.github.redtape9.nextupmanager.backend.model.TicketUpdateDTO;
 import lombok.RequiredArgsConstructor;
@@ -11,33 +13,59 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter.getFormattedDateTime;
+
+
 @Service
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketRepository nextUpTicketRepository;
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentService departmentService;
 
-    public List<Ticket> getAllCustomers() {
+    public List<Ticket> getAllTickets() {
         return nextUpTicketRepository.findAll();
     }
 
-    public Optional<Ticket> getCustomerById(String id) {
+    public Optional<Ticket> getTicketById(String id) {
         return nextUpTicketRepository.findById(id);
     }
 
-    public Ticket createTicket(Ticket ticket) {
-        return nextUpTicketRepository.save(ticket);
+    public Ticket createTicketWithDepartment(Ticket ticket, String departmentName) {
+        Department department = departmentRepository.findByName(departmentName);
+        if (department == null) {
+            throw new IllegalArgumentException("Department with name: " + departmentName + " does not exist");
+        }
+
+        // Logik zur Erstellung eines Tickets
+        ticket.setDepartmentId(department.getId());
+        ticket.setCreatedAt(getFormattedDateTime());
+        ticket.setCurrentStatus(TicketStatus.WAITING);
+        ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
+        Ticket.StatusChange statusChange = new Ticket.StatusChange();
+        statusChange.setStatus(TicketStatus.WAITING);
+        statusChange.setTimestamp(ticket.getCreatedAt());
+        ticket.getStatusHistory().add(statusChange);
+
+        Ticket createdTicket = nextUpTicketRepository.save(ticket);
+
+        // Aktualisieren der currentNumber in Department
+        department.setCurrentNumber(department.getCurrentNumber() + 1);
+        departmentService.updateDepartment(department);
+
+        return createdTicket;
     }
 
-    public Ticket updateCustomer(String id, TicketUpdateDTO updateDTO) {
+
+    public Ticket updateTicket(String id, TicketUpdateDTO updateDTO) {
         Ticket ticket = nextUpTicketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
-        updateCustomerWithDTO(ticket, updateDTO);
+        updateTicketWithDTO(ticket, updateDTO);
         return nextUpTicketRepository.save(ticket);
     }
 
-    private void updateCustomerWithDTO(Ticket ticket, TicketUpdateDTO updateDTO) {
+    private void updateTicketWithDTO(Ticket ticket, TicketUpdateDTO updateDTO) {
         ticket.setDepartmentId(updateDTO.getDepartmentId());
         ticket.setStatusHistory(updateDTO.getStatusHistory());
         ticket.setCurrentStatus(updateDTO.getCurrentStatus());
@@ -49,7 +77,7 @@ public class TicketService {
         nextUpTicketRepository.deleteById(id);
     }
 
-    public List<Ticket> getCustomersByDepartment(String departmentId) {
+    public List<Ticket> getTicketsByDepartment(String departmentId) {
         return nextUpTicketRepository.findByDepartmentId(departmentId);
     }
 
