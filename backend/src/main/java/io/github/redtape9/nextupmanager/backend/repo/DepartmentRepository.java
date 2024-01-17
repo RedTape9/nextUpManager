@@ -7,6 +7,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface DepartmentRepository extends MongoRepository<Department, String> {
     Department findByName(String name);
 
-    //findByiId Method
-    Department findById(Id id);
 }

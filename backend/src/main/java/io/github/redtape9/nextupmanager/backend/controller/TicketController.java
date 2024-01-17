@@ -32,24 +32,12 @@ public class TicketController {
         return ticketService.getAllTickets();
     }
 
-    // GET for select ticket in frontend
-    @GetMapping("department/{name}")
-    public List<Ticket> getCustomersByDepartmentName(@PathVariable String name) {
-        Department department = departmentService.getDepartmentByName(name);
-        if (department == null) {
-            throw new IllegalArgumentException("Department with name: " + name + " does not exist");
-        }
-        return ticketService.getAllTicketsByDepartmentId(department.getId());
-    }
+    // GET for select ticket in frontend by department name
 
-    @GetMapping("/department/{departmentId}")
-    public List<Ticket> getTicketsByDepartment(@PathVariable String departmentId) {
-        return ticketService.getAllTicketsByDepartmentId(departmentId);
-    }
 
     // UPDATE
     @PutMapping("/{id}")
-    public Ticket updateCustomer(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
+    public Ticket updateTicket(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
             return ticketService.updateTicket(id, updateDTO);
         } else {
