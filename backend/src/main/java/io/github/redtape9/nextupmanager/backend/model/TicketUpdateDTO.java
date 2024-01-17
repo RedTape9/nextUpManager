@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Date;
 
 @Data
-public class CustomerUpdateDTO {
+public class TicketUpdateDTO {
     private String departmentId;  // optional, falls sie geändert werden soll
-    private List<Customer.StatusChange> statusHistory;
-    private CustomerStatus currentStatus;
+    private List<Ticket.StatusChange> statusHistory;
+    private TicketStatus currentStatus;
     private String employeeId;
     private String commentByEmployee;
     private String room;
@@ -16,7 +16,7 @@ public class CustomerUpdateDTO {
 
     @Data
     public static class StatusChangeDTO {
-        private CustomerStatus status;
+        private TicketStatus status;
         private Date timestamp;
     }
 }

@@ -1,10 +1,10 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.model.Customer;
-import io.github.redtape9.nextupmanager.backend.model.CustomerUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.model.Ticket;
+import io.github.redtape9.nextupmanager.backend.model.TicketUpdateDTO;
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.CustomerStatus;
-import io.github.redtape9.nextupmanager.backend.service.CustomerService;
+import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
+import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/tickets")
 @RequiredArgsConstructor
-public class Controller {
-    private final CustomerService customerService;
+public class TicketController {
+    private final TicketService ticketService;
     private final DepartmentService departmentService;
 
 
@@ -30,13 +30,8 @@ public class Controller {
         return now.format(formatter);
     }
 
-
-
-
-// ... (andere Methoden und Hilfsfunktionen) ...
-
     @PostMapping("/department/{name}")
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer, @PathVariable String name) {
+    public Ticket createTicket(@RequestBody Ticket ticket, @PathVariable String name) {
         // Abteilung basierend auf dem Namen holen
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
@@ -44,65 +39,65 @@ public class Controller {
         }
 
         // Kundeninformationen setzen
-        customer.setDepartmentId(department.getId());
-        customer.setCreatedAt(getFormattedDateTime());
-        customer.setCurrentStatus(CustomerStatus.WAITING);
-        customer.setCustomerNr(department.getPrefix() + (department.getCurrentNumber() + 1));
+        ticket.setDepartmentId(department.getId());
+        ticket.setCreatedAt(getFormattedDateTime());
+        ticket.setCurrentStatus(TicketStatus.WAITING);
+        ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
 
         // Eintrag in statusHistory hinzufügen
-        Customer.StatusChange statusChange = new Customer.StatusChange();
-        statusChange.setStatus(CustomerStatus.WAITING);
-        statusChange.setTimestamp(customer.getCreatedAt());
-        customer.getStatusHistory().add(statusChange);
+        Ticket.StatusChange statusChange = new Ticket.StatusChange();
+        statusChange.setStatus(TicketStatus.WAITING);
+        statusChange.setTimestamp(ticket.getCreatedAt());
+        ticket.getStatusHistory().add(statusChange);
 
         // Neuen Kunden in der Datenbank speichern
-        Customer createdCustomer = customerService.createCustomer(customer);
+        Ticket createdTicket = ticketService.createTicket(ticket);
 
         // currentNumber in der Abteilung aktualisieren
         department.setCurrentNumber(department.getCurrentNumber() + 1);
         departmentService.updateDepartmentByName(department.getName(), department);
 
-        return ResponseEntity.ok(createdCustomer);
+        return createdTicket;
     }
 
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    public List<Ticket> getAllCustomers() {
+        return ticketService.getAllCustomers();
     }
 
     @GetMapping("department/{name}")
-    public List<Customer> getCustomersByDepartmentName(@PathVariable String name) {
+    public List<Ticket> getCustomersByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
             throw new IllegalArgumentException("Department with name: " + name + " does not exist");
         }
-        return customerService.getCustomersByDepartment(department.getId());
+        return ticketService.getCustomersByDepartment(department.getId());
     }
 
     @GetMapping("/department/{departmentId}")
-    public List<Customer> getCustomersByDepartment(@PathVariable String departmentId) {
-        return customerService.getCustomersByDepartment(departmentId);
+    public List<Ticket> getCustomersByDepartment(@PathVariable String departmentId) {
+        return ticketService.getCustomersByDepartment(departmentId);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable String id, @RequestBody CustomerUpdateDTO updateDTO) {
+    public ResponseEntity<Ticket> updateCustomer(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
-            Customer updatedCustomer = customerService.updateCustomer(id, updateDTO);
-            return ResponseEntity.ok(updatedCustomer);
+            Ticket updatedTicket = ticketService.updateCustomer(id, updateDTO);
+            return ResponseEntity.ok(updatedTicket);
         } else {
             throw new IllegalArgumentException("Kundeneingaben sind nicht valide");
         }
     }
 
-    private boolean isValidCustomerUpdateDTO(CustomerUpdateDTO updateDTO) {
+    private boolean isValidCustomerUpdateDTO(TicketUpdateDTO updateDTO) {
         return updateDTO.getCurrentStatus() != null;
     }
 
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable String id) {
-        Optional<Customer> customerOptional = customerService.getCustomerById(id);
+        Optional<Ticket> customerOptional = ticketService.getCustomerById(id);
         if (customerOptional.isPresent()) {
-            customerService.deleteCustomer(id);
+            ticketService.deleteCustomer(id);
         } else {
             throw new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden");
         }
