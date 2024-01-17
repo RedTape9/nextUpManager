@@ -21,6 +21,7 @@ public class EmployeeService {
         return employeeRepository.findAll().stream()
                 .map(employee -> {
                     EmployeeGetForOptionDTO employeeGetForOptionDTO = new EmployeeGetForOptionDTO();
+                    employeeGetForOptionDTO.setId(employee.getId());
                     employeeGetForOptionDTO.setName(employee.getName());
                     employeeGetForOptionDTO.setSurname(employee.getSurname());
                     return employeeGetForOptionDTO;

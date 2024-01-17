@@ -6,6 +6,4 @@ import lombok.Data;
 public class DepartmentGetForOptionDTO {
     private String id;
     private String name;
-    private String prefix;
-    private int currentNumber;
 }

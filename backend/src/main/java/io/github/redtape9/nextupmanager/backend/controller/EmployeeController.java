@@ -15,7 +15,6 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    //get all employees
     @GetMapping
     public List<EmployeeGetForOptionDTO> getAllEmployees() {
         return employeeService.getAllEmployees();

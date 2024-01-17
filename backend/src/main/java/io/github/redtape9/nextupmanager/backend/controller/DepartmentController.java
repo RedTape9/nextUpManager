@@ -20,7 +20,7 @@ public class DepartmentController {
     private final DepartmentService departmentService;
     private final TicketService ticketService;
 
-    @GetMapping("/department/{name}")
+    @GetMapping("/{name}")
     public List<Ticket> getTicketsByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
@@ -29,7 +29,7 @@ public class DepartmentController {
         return ticketService.getAllTicketsByDepartmentId(department.getId());
     }
 
-    @GetMapping("/department/{departmentId}")
+    @GetMapping("/id/{departmentId}")
     public List<Ticket> getTicketsByDepartment(@PathVariable String departmentId) {
         return ticketService.getAllTicketsByDepartmentId(departmentId);
     }

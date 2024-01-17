@@ -30,19 +30,12 @@ public class DepartmentService {
         return departmentRepository.save(existingDepartment);
     }
 
-       public Department getDepartmentById(String id) {
-        return departmentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Abteilung mit der id: " + id + " nicht gefunden"));
-    }
-
     public List<DepartmentGetForOptionDTO> getAllDepartments() {
         return departmentRepository.findAll().stream()
                 .map(department -> {
                     DepartmentGetForOptionDTO departmentGetForOptionDTO = new DepartmentGetForOptionDTO();
                     departmentGetForOptionDTO.setId(department.getId());
                     departmentGetForOptionDTO.setName(department.getName());
-                    departmentGetForOptionDTO.setPrefix(department.getPrefix());
-                    departmentGetForOptionDTO.setCurrentNumber(department.getCurrentNumber());
                     return departmentGetForOptionDTO;
                 })
                 .toList();
