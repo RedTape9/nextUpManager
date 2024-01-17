@@ -1,7 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentGetDTO;
+import io.github.redtape9.nextupmanager.backend.model.DepartmentGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
@@ -36,7 +36,7 @@ public class DepartmentController {
 
     // GET
     @GetMapping
-    public List<DepartmentGetDTO> getDepartments() {
+    public List<DepartmentGetForOptionDTO> getDepartments() {
         return departmentService.getAllDepartments();
     }
 

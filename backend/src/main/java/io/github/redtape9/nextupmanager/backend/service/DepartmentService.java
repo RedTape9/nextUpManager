@@ -1,8 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentGetDTO;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.model.DepartmentGetForOptionDTO;
+import io.github.redtape9.nextupmanager.backend.model.DepartmentUpdateNumberDTO;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ public class DepartmentService {
     }
 
     public Department updateDepartment(Department department) {
-        DepartmentUpdateDTO updateDTO = new DepartmentUpdateDTO();
+        DepartmentUpdateNumberDTO updateDTO = new DepartmentUpdateNumberDTO();
         updateDTO.setCurrentNumber(department.getCurrentNumber());
         return applyDepartmentUpdate(department, updateDTO);
     }
 
-    private Department applyDepartmentUpdate(Department existingDepartment, DepartmentUpdateDTO updateDTO) {
+    private Department applyDepartmentUpdate(Department existingDepartment, DepartmentUpdateNumberDTO updateDTO) {
         existingDepartment.setCurrentNumber(updateDTO.getCurrentNumber());
         // Weitere Aktualisierungen hier
         return departmentRepository.save(existingDepartment);
@@ -35,15 +35,15 @@ public class DepartmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Abteilung mit der id: " + id + " nicht gefunden"));
     }
 
-    public List<DepartmentGetDTO> getAllDepartments() {
+    public List<DepartmentGetForOptionDTO> getAllDepartments() {
         return departmentRepository.findAll().stream()
                 .map(department -> {
-                    DepartmentGetDTO departmentGetDTO = new DepartmentGetDTO();
-                    departmentGetDTO.setId(department.getId());
-                    departmentGetDTO.setName(department.getName());
-                    departmentGetDTO.setPrefix(department.getPrefix());
-                    departmentGetDTO.setCurrentNumber(department.getCurrentNumber());
-                    return departmentGetDTO;
+                    DepartmentGetForOptionDTO departmentGetForOptionDTO = new DepartmentGetForOptionDTO();
+                    departmentGetForOptionDTO.setId(department.getId());
+                    departmentGetForOptionDTO.setName(department.getName());
+                    departmentGetForOptionDTO.setPrefix(department.getPrefix());
+                    departmentGetForOptionDTO.setCurrentNumber(department.getCurrentNumber());
+                    return departmentGetForOptionDTO;
                 })
                 .toList();
     }
