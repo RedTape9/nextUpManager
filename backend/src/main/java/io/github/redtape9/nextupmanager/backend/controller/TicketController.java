@@ -1,8 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
-import io.github.redtape9.nextupmanager.backend.model.TicketUpdateDTO;
-import io.github.redtape9.nextupmanager.backend.model.Department;
+import io.github.redtape9.nextupmanager.backend.model.TicketAssigmentDTO;
+import io.github.redtape9.nextupmanager.backend.model.TicketCreateDTO;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TicketController {
     private final TicketService ticketService;
-    private final DepartmentService departmentService;
-
 
 
     // CREATE
@@ -34,10 +32,16 @@ public class TicketController {
 
     // GET for select ticket in frontend by department name
 
+    // UPDATE for assigment
+    @PutMapping("/next/{employeeId}")
+    public TicketAssigmentDTO assignNextTicketToEmployee(@PathVariable String employeeId) {
+        return ticketService.assignNextTicket(employeeId);
+    }
 
-    // UPDATE
+
+    // UPDATE for simple version
     @PutMapping("/{id}")
-    public Ticket updateTicket(@PathVariable String id, @RequestBody TicketUpdateDTO updateDTO) {
+    public Ticket updateTicket(@PathVariable String id, @RequestBody TicketCreateDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
             return ticketService.updateTicket(id, updateDTO);
         } else {
@@ -45,7 +49,7 @@ public class TicketController {
         }
     }
 
-    private boolean isValidCustomerUpdateDTO(TicketUpdateDTO updateDTO) {
+    private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
         return updateDTO.getCurrentStatus() != null;
     }
 

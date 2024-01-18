@@ -1,43 +1,58 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
-import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
-import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
-import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
-import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
-import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
+
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
-import io.github.redtape9.nextupmanager.backend.model.TicketUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.model.TicketCreateDTO;
+import io.github.redtape9.nextupmanager.backend.model.TicketAssigmentDTO;
+import io.github.redtape9.nextupmanager.backend.model.StatusChangeDTO;
+import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
+import io.github.redtape9.nextupmanager.backend.model.Department;
+import io.github.redtape9.nextupmanager.backend.model.Employee;
+import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
+import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
+import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
+import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
+import io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter;
+
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import static io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter.getFormattedDateTime;
-
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-    private final TicketRepository nextUpTicketRepository;
+
+    private final TicketRepository ticketRepository;
+
     private final DepartmentRepository departmentRepository;
+
     private final EmployeeRepository employeeRepository;
+
     private final DepartmentService departmentService;
 
+
+
     public List<Ticket> getAllTickets() {
-        return nextUpTicketRepository.findAll();
+        return ticketRepository.findAll();
     }
 
     public Optional<Ticket> getTicketById(String id) {
-        return nextUpTicketRepository.findById(id);
+        return ticketRepository.findById(id);
     }
 
     //CREATE
 
     public Ticket createTicketWithDepartment(Ticket ticket, String departmentName) {
+        // weitere DTO hier?
         Department department = departmentRepository.findByName(departmentName);
         if (department == null) {
-            throw new IllegalArgumentException("Department with name: " + departmentName + " does not exist");
+            throw new IllegalArgumentException("Department mit Namen: " + departmentName + " existiert nicht");
         }
 
         // Logik zur Erstellung eines Tickets
@@ -50,7 +65,7 @@ public class TicketService {
         statusChange.setTimestamp(ticket.getCreatedAt());
         ticket.getStatusHistory().add(statusChange);
 
-        Ticket createdTicket = nextUpTicketRepository.save(ticket);
+        Ticket createdTicket = ticketRepository.save(ticket);
 
 
         // Aktualisieren der currentNumber in Department
@@ -61,14 +76,16 @@ public class TicketService {
     }
 
 
-    public Ticket updateTicket(String id, TicketUpdateDTO updateDTO) {
-        Ticket ticket = nextUpTicketRepository.findById(id)
+    //UPDATE for simle version
+    public Ticket updateTicket(String id, TicketCreateDTO updateDTO) {
+        Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
         updateTicketWithDTO(ticket, updateDTO);
-        return nextUpTicketRepository.save(ticket);
+        return ticketRepository.save(ticket);
     }
 
-    private void updateTicketWithDTO(Ticket ticket, TicketUpdateDTO updateDTO) {
+
+    private void updateTicketWithDTO(Ticket ticket, TicketCreateDTO updateDTO) {
         ticket.setDepartmentId(updateDTO.getDepartmentId());
         ticket.setStatusHistory(updateDTO.getStatusHistory());
         ticket.setCurrentStatus(updateDTO.getCurrentStatus());
@@ -77,11 +94,11 @@ public class TicketService {
     }
 
     public void deleteCustomer(String id) {
-        nextUpTicketRepository.deleteById(id);
+        ticketRepository.deleteById(id);
     }
 
     public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
-        return nextUpTicketRepository.findByDepartmentId(departmentId);
+        return ticketRepository.findByDepartmentId(departmentId);
     }
 
 
@@ -93,5 +110,42 @@ public class TicketService {
         return departmentRepository.save(department);
     }
 
+    //UPDATE for assignment
+    public TicketAssigmentDTO assignNextTicket(String employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
 
+        Ticket oldestTicket = ticketRepository.findOldestWaitingTicketByDepartmentId(employee.getDepartmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Keine Tickets im Wartestatus gefunden"));
+
+        oldestTicket.setCurrentStatus(TicketStatus.IN_PROGRESS);
+        Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
+        newStatusChange.setStatus(TicketStatus.IN_PROGRESS);
+        newStatusChange.setTimestamp(getFormattedDateTime());
+        oldestTicket.getStatusHistory().add(newStatusChange);
+
+        oldestTicket.setRoom(employee.getRoom());
+        oldestTicket.setEmployeeId(employeeId);
+
+        Ticket updatedTicket = ticketRepository.save(oldestTicket);
+
+        List<StatusChangeDTO> statusChangeDTOs = updatedTicket.getStatusHistory().stream()
+                .map(sc -> {
+                    StatusChangeDTO dto = new StatusChangeDTO();
+                    dto.setStatus(sc.getStatus().toString());
+                    dto.setTimestamp(sc.getTimestamp());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        TicketAssigmentDTO dto = new TicketAssigmentDTO();
+
+        dto.setEmployeeId(updatedTicket.getEmployeeId());
+        dto.setRoom(updatedTicket.getRoom());
+        dto.setCurrentStatus(updatedTicket.getCurrentStatus().toString());
+        dto.setTimestamp(newStatusChange.getTimestamp());
+        dto.setStatusHistory(statusChangeDTOs);
+
+        return dto;
+    }
 }

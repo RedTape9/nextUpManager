@@ -24,7 +24,7 @@ public class DepartmentController {
     public List<Ticket> getTicketsByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
-            throw new IllegalArgumentException("Department with name: " + name + " does not exist");
+            throw new IllegalArgumentException("Department mit namen: " + name + " existiert nicht");
         }
         return ticketService.getAllTicketsByDepartmentId(department.getId());
     }
