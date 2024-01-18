@@ -16,6 +16,9 @@ import io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -112,11 +115,28 @@ public class TicketService {
 
     //UPDATE for assignment
     public TicketAssigmentDTO assignNextTicket(String employeeId) {
+        /*Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
+
+        Optional<Ticket> oldestTicketOptional = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId());
+
+        if (oldestTicketOptional.isEmpty()) {
+            throw new IllegalArgumentException("Keine Tickets im Wartestatus gefunden");
+        }
+
+        Ticket oldestTicket = oldestTicketOptional.get();*/
+
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
 
-        Ticket oldestTicket = ticketRepository.findOldestWaitingTicketByDepartmentId(employee.getDepartmentId())
-                .orElseThrow(() -> new IllegalArgumentException("Keine Tickets im Wartestatus gefunden"));
+        Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt"));
+        List<Ticket> tickets = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), pageable);
+
+        if (tickets.isEmpty()) {
+            throw new IllegalArgumentException("Keine Tickets im Wartestatus gefunden");
+        }
+
+        Ticket oldestTicket = tickets.getFirst();
 
         oldestTicket.setCurrentStatus(TicketStatus.IN_PROGRESS);
         Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
