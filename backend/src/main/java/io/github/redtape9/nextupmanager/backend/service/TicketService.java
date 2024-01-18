@@ -183,7 +183,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + ticketId + " nicht gefunden"));
 
-        if (!ticket.getEmployeeId().equals(employeeId) || ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
+        if (!ticket.getEmployeeId().equals(employeeId) && ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
             throw new IllegalStateException("Ticket kann nicht aktualisiert werden, da der Mitarbeiter oder der Status nicht valide ist");
         }
 
