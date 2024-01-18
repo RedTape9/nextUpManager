@@ -1,7 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentGetForOptionDTO;
+import io.github.redtape9.nextupmanager.backend.dto.DepartmentGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;

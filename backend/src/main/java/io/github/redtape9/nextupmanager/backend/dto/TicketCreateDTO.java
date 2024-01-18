@@ -1,5 +1,7 @@
-package io.github.redtape9.nextupmanager.backend.model;
+package io.github.redtape9.nextupmanager.backend.dto;
 
+import io.github.redtape9.nextupmanager.backend.model.Ticket;
+import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
 import lombok.Data;
 import java.util.List;
 

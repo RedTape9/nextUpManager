@@ -1,8 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.model.Department;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentGetForOptionDTO;
-import io.github.redtape9.nextupmanager.backend.model.DepartmentUpdateNumberDTO;
+import io.github.redtape9.nextupmanager.backend.dto.DepartmentGetForOptionDTO;
+import io.github.redtape9.nextupmanager.backend.dto.DepartmentUpdateNumberDTO;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

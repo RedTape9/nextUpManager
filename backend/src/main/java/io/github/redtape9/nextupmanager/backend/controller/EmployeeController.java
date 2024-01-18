@@ -1,6 +1,6 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.model.EmployeeGetForOptionDTO;
+import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

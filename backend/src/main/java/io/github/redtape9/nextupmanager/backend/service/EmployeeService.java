@@ -1,7 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.model.Employee;
-import io.github.redtape9.nextupmanager.backend.model.EmployeeGetForOptionDTO;
+import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

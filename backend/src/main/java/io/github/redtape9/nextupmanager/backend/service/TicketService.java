@@ -2,17 +2,15 @@ package io.github.redtape9.nextupmanager.backend.service;
 
 
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
-import io.github.redtape9.nextupmanager.backend.model.TicketCreateDTO;
-import io.github.redtape9.nextupmanager.backend.model.TicketAssigmentDTO;
-import io.github.redtape9.nextupmanager.backend.model.StatusChangeDTO;
+import io.github.redtape9.nextupmanager.backend.dto.TicketCreateDTO;
+import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
+import io.github.redtape9.nextupmanager.backend.dto.StatusChangeDTO;
 import io.github.redtape9.nextupmanager.backend.model.TicketStatus;
 import io.github.redtape9.nextupmanager.backend.model.Department;
 import io.github.redtape9.nextupmanager.backend.model.Employee;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
-import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
-import io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter;
 
 
 import lombok.RequiredArgsConstructor;

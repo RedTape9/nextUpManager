@@ -1,10 +1,9 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
 import io.github.redtape9.nextupmanager.backend.model.Ticket;
-import io.github.redtape9.nextupmanager.backend.model.TicketAssigmentDTO;
-import io.github.redtape9.nextupmanager.backend.model.TicketCreateDTO;
+import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
+import io.github.redtape9.nextupmanager.backend.dto.TicketCreateDTO;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
-import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
