@@ -1,4 +1,4 @@
-package io.github.redtape9.nextupmanager.backend.model;
+package io.github.redtape9.nextupmanager.backend.entity;
 
 public enum TicketStatus {
     WAITING,

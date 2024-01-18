@@ -1,6 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.model.Ticket;
+import io.github.redtape9.nextupmanager.backend.dto.TicketUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.entity.Ticket;
 import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
 import io.github.redtape9.nextupmanager.backend.dto.TicketCreateDTO;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
@@ -24,6 +25,8 @@ public class TicketController {
     }
 
     // GET
+
+    // Getter auf DTOS umstellen
     @GetMapping
     public List<Ticket> getAllTickets() {
         return ticketService.getAllTickets();
@@ -39,13 +42,23 @@ public class TicketController {
 
 
     // UPDATE for simple version
-    @PutMapping("/{id}")
+    /*@PutMapping("/{id}")
     public Ticket updateTicket(@PathVariable String id, @RequestBody TicketCreateDTO updateDTO) {
         if(isValidCustomerUpdateDTO(updateDTO)) {
             return ticketService.updateTicket(id, updateDTO);
         } else {
             throw new IllegalArgumentException("Ticketeingaben sind nicht valide");
         }
+    }*/
+
+    // UPDATE for status change to FINISHED or CANCELED
+
+    @PutMapping("/{id}/status")
+    public Ticket updateTicketStatus(
+            @PathVariable String id,
+            @RequestBody TicketUpdateDTO updateDTO) {
+
+        return ticketService.updateTicketStatus(id, updateDTO);
     }
 
     private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
@@ -56,7 +69,7 @@ public class TicketController {
     public void deleteCustomer(@PathVariable String id) {
         Optional<Ticket> customerOptional = ticketService.getTicketById(id);
         if (customerOptional.isPresent()) {
-            ticketService.deleteCustomer(id);
+            ticketService.deleteTicket(id);
         } else {
             throw new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden");
         }
