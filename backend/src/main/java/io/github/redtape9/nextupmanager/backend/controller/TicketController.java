@@ -53,12 +53,13 @@ public class TicketController {
 
     // UPDATE for status change to FINISHED or CANCELED
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{ticketId}/status/{employeeId}")
     public Ticket updateTicketStatus(
-            @PathVariable String id,
+            @PathVariable String ticketId,
+            @PathVariable String employeeId,
             @RequestBody TicketUpdateDTO updateDTO) {
 
-        return ticketService.updateTicketStatus(id, updateDTO);
+        return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
     }
 
     private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
