@@ -211,5 +211,14 @@ public class TicketService {
         return input;
     }
 
+    public void deleteAllTicketsAndResetDepartmentNumbers() {
+        ticketRepository.deleteAll();
+        List<Department> departments = departmentRepository.findAll();
+        for (Department department : departments) {
+            department.setCurrentNumber(100);
+            departmentRepository.save(department);
+        }
+    }
+
 
 }

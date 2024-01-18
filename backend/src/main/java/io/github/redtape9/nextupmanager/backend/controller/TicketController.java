@@ -76,5 +76,10 @@ public class TicketController {
         }
     }
 
+    @DeleteMapping("/deleteAll")
+    public void deleteAllTickets(){
+        ticketService.deleteAllTicketsAndResetDepartmentNumbers();
+    }
+
 
 }
