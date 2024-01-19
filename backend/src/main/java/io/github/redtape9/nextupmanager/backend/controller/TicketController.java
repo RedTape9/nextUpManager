@@ -1,9 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.dto.TicketUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.dto.*;
 import io.github.redtape9.nextupmanager.backend.entity.Ticket;
-import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
-import io.github.redtape9.nextupmanager.backend.dto.TicketCreateDTO;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +22,20 @@ public class TicketController {
         return ticketService.createTicketWithDepartment(ticket, name);
     }
 
-    // GET
+    // GET by id
+    @GetMapping("/{id}")
+    public TicketGetByIdDTO getTicketById(@PathVariable String id) {
+        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
+        if (ticketOptional.isPresent()) {
+            return ticketOptional.get();
+        } else {
+            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
+        }
+    }
 
-    // Getter auf DTOS umstellen
+    // TODO: Getter auf DTOS umstellen
     @GetMapping
-    public List<Ticket> getAllTickets() {
+    public List<TicketGetAllDTO> getAllTickets() {
         return ticketService.getAllTickets();
     }
 
@@ -67,12 +74,12 @@ public class TicketController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable String id) {
-        Optional<Ticket> customerOptional = ticketService.getTicketById(id);
-        if (customerOptional.isPresent()) {
+    public void deleteTicket(@PathVariable String id) {
+        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
+        if (ticketOptional.isPresent()) {
             ticketService.deleteTicket(id);
         } else {
-            throw new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden");
+            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
         }
     }
 

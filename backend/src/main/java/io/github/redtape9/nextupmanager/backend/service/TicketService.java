@@ -1,10 +1,8 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
 
-import io.github.redtape9.nextupmanager.backend.dto.TicketUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.dto.*;
 import io.github.redtape9.nextupmanager.backend.entity.Ticket;
-import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
-import io.github.redtape9.nextupmanager.backend.dto.StatusChangeDTO;
 import io.github.redtape9.nextupmanager.backend.entity.TicketStatus;
 import io.github.redtape9.nextupmanager.backend.entity.Department;
 import io.github.redtape9.nextupmanager.backend.entity.Employee;
@@ -40,12 +38,29 @@ public class TicketService {
 
 
 
-    public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
-    }
+    public List<TicketGetAllDTO> getAllTickets() {
+        return ticketRepository.findAll().stream()
+                .map(ticket -> {
+                    TicketGetAllDTO dto = new TicketGetAllDTO();
+                    dto.setId(ticket.getId());
+                    dto.setDepartmentId(ticket.getDepartmentId());
+                    dto.setTicketNr(ticket.getTicketNr());
+                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
 
-    public Optional<Ticket> getTicketById(String id) {
-        return ticketRepository.findById(id);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+    public Optional<TicketGetByIdDTO> getTicketById(String id) {
+        return ticketRepository.findById(id)
+                .map(ticket -> {
+                    TicketGetByIdDTO dto = new TicketGetByIdDTO();
+                    dto.setId(ticket.getId());
+                    dto.setDepartmentId(ticket.getDepartmentId());
+                    dto.setTicketNr(ticket.getTicketNr());
+                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
+                    return dto;
+                });
     }
 
     //CREATE
