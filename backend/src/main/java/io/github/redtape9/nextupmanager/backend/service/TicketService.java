@@ -37,6 +37,19 @@ public class TicketService {
     private final DepartmentService departmentService;
 
 
+    public List<TicketGetAllDTO> getAllWaitingTickets() {
+        return ticketRepository.findAllByCurrentStatus(TicketStatus.WAITING)
+                .stream()
+                .map(ticket -> {
+                    TicketGetAllDTO dto = new TicketGetAllDTO();
+                    dto.setId(ticket.getId());
+                    dto.setDepartmentId(ticket.getDepartmentId());
+                    dto.setTicketNr(ticket.getTicketNr());
+                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
     public List<TicketGetAllDTO> getAllTickets() {
         return ticketRepository.findAll().stream()

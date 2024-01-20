@@ -35,6 +35,10 @@ public class TicketController {
     }
 
     // TODO: Getter auf DTOS umstellen
+    @GetMapping("/waiting")
+    public List<TicketGetAllDTO> getAllWaitingTickets() {
+        return ticketService.getAllWaitingTickets();
+    }
     @GetMapping
     public List<TicketGetAllDTO> getAllTickets() {
         return ticketService.getAllTickets();

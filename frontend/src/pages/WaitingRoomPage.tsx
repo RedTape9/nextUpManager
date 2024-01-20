@@ -1,6 +1,6 @@
 // frontend/src/pages/WaitingRoomPage.tsx
 import { useEffect, useState } from 'react';
-import { getTickets } from '../service/apiService';
+import { getAllWaitingTickets } from '../service/apiService';
 import Ticket from '../interfaces/TicketInterface.ts';
 import '../styles/WaitingRoomPage.css';
 
@@ -11,7 +11,7 @@ const WaitingRoomPage = () => {
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const data = await getTickets();
+                const data = await getAllWaitingTickets();
                 setTickets(data);
             } catch (error) {
                 setError('Error fetching tickets');
@@ -31,9 +31,7 @@ const WaitingRoomPage = () => {
             <h1>Wartezimmer!</h1>
             {tickets.map((ticket, index) => (
                 <div key={index} className="card">
-                    <h2>Ticket {index + 1}</h2>
-                    <p>Status: {ticket.currentStatus}</p>
-                    <p>Ticket Nr: {ticket.ticketNr}</p>
+                    <h2 className="ticketNr">{ticket.ticketNr}</h2>
                 </div>
             ))}
         </div>
