@@ -1,36 +1,42 @@
 // frontend/src/pages/WaitingRoomPage.tsx
 import { useEffect, useState } from 'react';
 import { getTickets } from '../service/apiService';
-import { Card, Container } from 'react-bootstrap';
+import Ticket from '../interfaces/TicketInterface.ts';
+import '../styles/WaitingRoomPage.css';
 
 const WaitingRoomPage = () => {
-    const [tickets, setTickets] = useState([]);
+    const [tickets, setTickets] = useState<Ticket[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchTickets = async () => {
-            const data = await getTickets();
-            setTickets(data);
+            try {
+                const data = await getTickets();
+                setTickets(data);
+            } catch (error) {
+                setError('Error fetching tickets');
+                console.error('Error fetching tickets', error);
+            }
         };
 
         fetchTickets();
     }, []);
 
-    //kommentar
+    if (error) {
+        return <div>{error}</div>;
+    }
+
     return (
-        <Container>
-            <h1>Wartezimmer</h1>
+        <div className="container">
+            <h1>Wartezimmer!</h1>
             {tickets.map((ticket, index) => (
-                <Card key={index} className="mb-3">
-                    <Card.Header>Ticket {index + 1}</Card.Header>
-                    <Card.Body>
-                        <Card.Title>{ticket.id}</Card.Title>
-                        <Card.Text>
-                            {ticket.ticketNr}
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
+                <div key={index} className="card">
+                    <h2>Ticket {index + 1}</h2>
+                    <p>Status: {ticket.currentStatus}</p>
+                    <p>Ticket Nr: {ticket.ticketNr}</p>
+                </div>
             ))}
-        </Container>
+        </div>
     );
 };
 

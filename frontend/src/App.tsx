@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import MainMenu from './pages/MainMenu';
-import EmployeePage from './pages/EmployeePage';
+import WaitingRoomPage from './pages/WaitingRoomPage'; // Import WaitingRoomPage
 
 function App() {
     return (
@@ -9,8 +9,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/main-menu" element={<MainMenu />} />
-                <Route path="/waiting-room" element={<div>Wartezimmer</div>} />
-                <Route path="/employee/:id" element={<EmployeePage />} />
+                <Route path="/waiting-room" element={<WaitingRoomPage />} /> {/* Use WaitingRoomPage */}
             </Routes>
         </Router>
     );
