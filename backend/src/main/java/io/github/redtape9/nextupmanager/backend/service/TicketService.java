@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,6 +37,8 @@ public class TicketService {
 
     private final DepartmentService departmentService;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     public List<TicketGetAllDTO> getAllWaitingTickets() {
         return ticketRepository.findAllByCurrentStatus(TicketStatus.WAITING)
@@ -46,6 +49,18 @@ public class TicketService {
                     dto.setDepartmentId(ticket.getDepartmentId());
                     dto.setTicketNr(ticket.getTicketNr());
                     dto.setCurrentStatus(ticket.getCurrentStatus().toString());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<TicketGetAllWhereStatusInProgressDTO> getAllInProgressTickets() {
+        return ticketRepository.findAllByCurrentStatus(TicketStatus.IN_PROGRESS)
+                .stream()
+                .map(ticket -> {
+                    TicketGetAllWhereStatusInProgressDTO dto = new TicketGetAllWhereStatusInProgressDTO();
+                    dto.setTicketNr(ticket.getTicketNr());
+                    dto.setRoom(ticket.getRoom());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -102,6 +117,13 @@ public class TicketService {
         department.setCurrentNumber(department.getCurrentNumber() + 1);
         departmentService.updateDepartment(department);
 
+        // Senden einer Nachricht an das Frontend
+        if (messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/updates", "Neues Ticket erstellt: " + ticket.getTicketNr());
+        } else {
+            System.err.println("SimpMessagingTemplate ist null");
+        }
+
         return createdTicket;
     }
 
@@ -141,17 +163,13 @@ public class TicketService {
     }
 
     //UPDATE for assignment
+
+
     public TicketAssigmentDTO assignNextTicket(String employeeId) {
-        /*Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + employeeId + " nicht gefunden"));
-
-        Optional<Ticket> oldestTicketOptional = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId());
-
-        if (oldestTicketOptional.isEmpty()) {
-            throw new IllegalArgumentException("Keine Tickets im Wartestatus gefunden");
+        boolean hasActiveTicket = ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS);
+        if (hasActiveTicket) {
+            throw new IllegalStateException("Mitarbeiter hat bereits ein aktives Ticket in Bearbeitung");
         }
-
-        Ticket oldestTicket = oldestTicketOptional.get();*/
 
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + employeeId + " nicht gefunden"));
@@ -192,6 +210,15 @@ public class TicketService {
         dto.setCurrentStatus(updatedTicket.getCurrentStatus().toString());
         dto.setTimestamp(newStatusChange.getTimestamp());
         dto.setStatusHistory(statusChangeDTOs);
+
+
+        // Senden einer Nachricht an das Frontend
+        if (messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/updates", "Ticket zugewiesen");
+        } else {
+            System.err.println("SimpMessagingTemplate ist null");
+        }
+
 
         return dto;
     }
@@ -247,6 +274,7 @@ public class TicketService {
             departmentRepository.save(department);
         }
     }
+
 
 
 }

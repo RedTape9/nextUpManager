@@ -39,6 +39,12 @@ public class TicketController {
     public List<TicketGetAllDTO> getAllWaitingTickets() {
         return ticketService.getAllWaitingTickets();
     }
+
+    @GetMapping("/in-progress")
+    public List<TicketGetAllWhereStatusInProgressDTO> getAllInProgressTickets() {
+        return ticketService.getAllInProgressTickets();
+    }
+
     @GetMapping
     public List<TicketGetAllDTO> getAllTickets() {
         return ticketService.getAllTickets();
