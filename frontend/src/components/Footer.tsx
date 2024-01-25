@@ -1,7 +1,7 @@
 
 function Footer() {
     return (
-        <footer style={{ backgroundColor: '#00D2FF', height: '150px' }}>
+        <footer className="bg-primary brighter-navbar" style={{  height: '150px', marginTop: '50px' }}>
             {/* Inhalt des Footers */}
         </footer>
     );

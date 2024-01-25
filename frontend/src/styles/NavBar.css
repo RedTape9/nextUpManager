@@ -1,0 +1,5 @@
+/* aufhellen um 50% */
+
+.brighter-navbar {
+    filter: brightness(150%);
+}

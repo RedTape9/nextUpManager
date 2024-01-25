@@ -1,13 +1,16 @@
 
-import { Link } from 'react-router-dom';
+import NavBar from "../components/NavBar.tsx";
+import Footer from "../components/Footer.tsx";
 
 const HomePage = () => {
     return (
-        <div>
-            <h1>Willkommen beim Ticket-System</h1>
-            <Link to="/main-menu">Zum Hauptmenü</Link>
-            <Link to="/waiting-room">Zum Wartezimmer</Link>
-        </div>
+
+        <>
+
+            <NavBar/>
+            <h2>Home Page</h2>
+            <Footer/>
+        </>
     );
 };
 

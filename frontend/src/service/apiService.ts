@@ -1,7 +1,9 @@
 
 import axios from 'axios';
+import Ticket from "../interfaces/Ticket.ts";
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
+const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
 
 export const getAllWaitingTickets = async () => {
     try {
@@ -23,3 +25,23 @@ export const getAllInProgressTickets = async () => {
         console.error('Error fetching tickets', error);
     }
 }
+
+export const getAllDepartments = async () => {
+    try {
+        const response = await axios.get(API_BASE_URL_DEPARTMENTS);
+        console.log('Fetched departments:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching departments', error);
+    }
+};
+
+export const createTicketWithDepartment = async (departmentName: string, ticket: Ticket) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL_DEPARTMENTS}/department/${departmentName}`, ticket);
+        console.log('Created ticket:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating ticket', error);
+    }
+};
