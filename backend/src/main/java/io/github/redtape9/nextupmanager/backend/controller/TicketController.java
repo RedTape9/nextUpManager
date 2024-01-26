@@ -34,6 +34,7 @@ public class TicketController {
         }
     }
 
+
     // TODO: Getter auf DTOS umstellen
     @GetMapping("/waiting")
     public List<TicketGetAllDTO> getAllWaitingTickets() {
