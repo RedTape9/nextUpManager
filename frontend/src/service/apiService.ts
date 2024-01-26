@@ -1,9 +1,8 @@
-
 import axios from 'axios';
-
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
+const API_BASE_URL_EMPLOYEES = 'http://localhost:8080/api/employees';
 
 export const getAllWaitingTickets = async () => {
     try {
@@ -43,5 +42,15 @@ export const createTicketWithDepartment = async (departmentName: string) => {
         return response.data;
     } catch (error) {
         console.error('Error creating ticket', error);
+    }
+};
+
+export const getAllEmployees = async () => {
+    try {
+        const response = await axios.get(API_BASE_URL_EMPLOYEES);
+        console.log('Fetched employees:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching employees', error);
     }
 };
