@@ -1,10 +1,13 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
+import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForDetailsDTO;
 import io.github.redtape9.nextupmanager.backend.entity.Employee;
 import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -13,8 +16,18 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
-    public Employee getEmployeeById(String id) {
-        return employeeRepository.findById(id).orElse(null);
+    public EmployeeGetForDetailsDTO getEmployeeById(String id) {
+        Employee employee = employeeRepository.findById(id).orElse(null);
+        if (employee == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mitarbeiter nicht gefunden");
+        }
+        EmployeeGetForDetailsDTO employeeGetForDetailsDTO = new EmployeeGetForDetailsDTO();
+        employeeGetForDetailsDTO.setId(employee.getId());
+        employeeGetForDetailsDTO.setName(employee.getName());
+        employeeGetForDetailsDTO.setSurname(employee.getSurname());
+        employeeGetForDetailsDTO.setDepartmentId(employee.getDepartmentId());
+        employeeGetForDetailsDTO.setRoom(employee.getRoom());
+        return employeeGetForDetailsDTO;
     }
 
     public List<EmployeeGetForOptionDTO> getAllEmployees() {

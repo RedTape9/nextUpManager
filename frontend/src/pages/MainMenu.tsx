@@ -10,7 +10,7 @@ import {
 } from "../service/apiService";
 import WaitingTicketInterface from "../interfaces/WaitingTicketsInterface";
 import DepartmentGetForOptionDTO from "../interfaces/DepartmentGetForOptionDTO";
-import Employee from "../interfaces/Employee";
+import EmployeeBasicInfo from "../interfaces/EmployeeBasicInfo.ts";
 import { Button, Form } from "react-bootstrap";
 import Ticket from "../interfaces/Ticket.ts";
 
@@ -20,7 +20,7 @@ const MainMenu = () => {
     const [departments, setDepartments] = useState<DepartmentGetForOptionDTO[]>([]);
     const [selectedDepartment, setSelectedDepartment] = useState<string>('');
     const [createdTicket, setCreatedTicket] = useState<Ticket | null>(null);
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
     const navigate = useNavigate();
 

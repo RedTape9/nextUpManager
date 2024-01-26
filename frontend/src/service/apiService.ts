@@ -54,3 +54,13 @@ export const getAllEmployees = async () => {
         console.error('Error fetching employees', error);
     }
 };
+
+export const getEmployeeById = async (id: string) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL_EMPLOYEES}/${id}`);
+        console.log('Fetched employee:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching employee', error);
+    }
+}

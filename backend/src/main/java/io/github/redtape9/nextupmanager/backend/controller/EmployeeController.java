@@ -1,12 +1,10 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
+import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForDetailsDTO;
 import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForOptionDTO;
 import io.github.redtape9.nextupmanager.backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,9 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
+    @GetMapping("/{id}")
+    public EmployeeGetForDetailsDTO getEmployeeById(@PathVariable String id) {
+        return employeeService.getEmployeeById(id);
+    }
 
 }
