@@ -38,7 +38,7 @@ export const getAllDepartments = async () => {
 
 export const createTicketWithDepartment = async (departmentName: string, ticket: Ticket) => {
     try {
-        const response = await axios.post(`${API_BASE_URL_DEPARTMENTS}/department/${departmentName}`, ticket);
+        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, ticket);
         console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {

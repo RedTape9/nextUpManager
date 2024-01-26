@@ -79,7 +79,7 @@ const MainMenu = () => {
                                 Tickets verwalten
                             </div>
                             <div className="card-body">
-                                {/* Hier können Sie den Inhalt für "Tickets verwalten" hinzufügen */}
+
                             </div>
                         </div>
                     </div>
@@ -90,7 +90,7 @@ const MainMenu = () => {
                             </div>
                             <div className="card-body">
                                 {tickets
-                                    .slice(currentIndex, currentIndex + 8) // Zeigen Sie immer die nächsten 8 Tickets ab dem aktuellen Index an
+                                    .slice(currentIndex, currentIndex + 8)
                                     .map((ticket, index) => (
                                         <div key={index}
                                              className="card w-auto text-bg-primary text-center m-2">
@@ -99,10 +99,10 @@ const MainMenu = () => {
                                     ))
                                 }
                                 <div className="d-flex justify-content-between">
-                                    <Button onClick={handlePrevious}> {/* Fügen Sie die handlePrevious Funktion hinzu */}
+                                    <Button onClick={handlePrevious}>
                                         ◀
                                     </Button>
-                                    <Button onClick={handleNext}> {/* Fügen Sie die handleNext Funktion hinzu */}
+                                    <Button onClick={handleNext}>
                                         ▶
                                     </Button>
                                 </div>
