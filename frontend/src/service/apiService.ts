@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import Ticket from "../interfaces/Ticket.ts";
+
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
@@ -36,9 +36,9 @@ export const getAllDepartments = async () => {
     }
 };
 
-export const createTicketWithDepartment = async (departmentName: string, ticket: Ticket) => {
+export const createTicketWithDepartment = async (departmentName: string) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, ticket);
+        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
         console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {

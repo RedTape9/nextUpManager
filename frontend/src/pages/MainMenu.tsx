@@ -4,7 +4,6 @@ import Footer from "../components/Footer.tsx";
 import { getAllWaitingTickets, getAllDepartments, createTicketWithDepartment } from "../service/apiService";
 import WaitingTicketInterface from "../interfaces/WaitingTicketsInterface";
 import DepartmentGetForOptionDTO from "../interfaces/DepartmentGetForOptionDTO";
-import Ticket from "../interfaces/Ticket";
 import { Button, Form } from "react-bootstrap";
 
 const MainMenu = () => {
@@ -36,11 +35,7 @@ const MainMenu = () => {
     };
 
     const handleBook = async () => {
-        const newTicket: Ticket = {
-            id: '', // Fill with appropriate data
-            // Other properties...
-        };
-        await createTicketWithDepartment(selectedDepartment, newTicket);
+        await createTicketWithDepartment(selectedDepartment);
     };
 
     const handlePrevious = () => {
