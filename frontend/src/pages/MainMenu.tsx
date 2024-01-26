@@ -30,6 +30,9 @@ const MainMenu = () => {
     const fetchDepartments = async () => {
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
+        if (!selectedDepartment && departmentsData.length > 0) {
+            setSelectedDepartment(departmentsData[0].name);
+        }
     };
 
     const handleBook = async () => {
