@@ -8,6 +8,7 @@ import NavBar from "../components/NavBar.tsx";
 import '../styles/colors.css';
 import Footer from "../components/Footer.tsx";
 import {Card, Col, Container, Row} from "react-bootstrap";
+import {Client} from "@stomp/stompjs";
 
 const WaitingRoomPage = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -36,10 +37,28 @@ const WaitingRoomPage = () => {
         //         });
         //     }
         // };
+        const client = new Client({
+            brokerURL: 'ws://localhost:8080/ws',
+            onConnect: () => {
+                client.subscribe('/topic/updates', message =>{
+                    console.log(`Received: ${message.body}`);
+                    fetchTickets();
+                }
+                );
+            },
+        });
+        client.activate();
+        return () => {
+            client.deactivate();
+        }
 
-        fetchTickets();
+
     }, []);
 
+
+    useEffect(() => {
+        fetchTickets();
+    }, []);
     const fetchTickets = async () => {
         try {
             const waitingData = await getAllWaitingTickets();

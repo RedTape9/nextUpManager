@@ -235,11 +235,11 @@ public class TicketService {
 
 
         // Senden einer Nachricht an das Frontend
-        /*if (messagingTemplate != null) {
+        if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/updates", "Ticket zugewiesen");
         } else {
             System.err.println("SimpMessagingTemplate ist null");
-        }*/
+        }
 
 
         return dto;
