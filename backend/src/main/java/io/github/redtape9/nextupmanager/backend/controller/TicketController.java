@@ -51,7 +51,13 @@ public class TicketController {
         return ticketService.getAllTickets();
     }
 
-    // GET for select ticket in frontend by department name
+
+
+    // in TicketController.java
+    @GetMapping("/in-progress/{employeeId}")
+    public TicketAssigmentDTO getInProgressTicketByEmployeeId(@PathVariable String employeeId) {
+        return ticketService.getInProgressTicketByEmployeeId(employeeId);
+    }
 
     // UPDATE for assigment
     @PutMapping("/next/{employeeId}")
@@ -74,7 +80,7 @@ public class TicketController {
     // UPDATE for status change to FINISHED or CANCELED
 
     @PutMapping("/{ticketId}/status/{employeeId}")
-    public Ticket updateTicketStatus(
+    public TicketUpdateDTO updateTicketStatus(
             @PathVariable String ticketId,
             @PathVariable String employeeId,
             @RequestBody TicketUpdateDTO updateDTO) {

@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import EmployeeDetailInfo from "../interfaces/EmployeeDetailInfo.ts";
-import {getEmployeeById, getDepartmentById, assignNextTicketToEmployee} from "../service/apiService.ts";
+import {
+    getEmployeeById,
+    getDepartmentById,
+    getInProgressTicketByEmployeeId,
+    assignNextTicketToEmployee
+} from "../service/apiService.ts";
 import NavBar from "../components/NavBar.tsx";
 import {Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
 import Footer from "../components/Footer.tsx";
@@ -13,35 +18,47 @@ const EmployeePage = () => {
     const [department, setDepartment] = useState(null);
     const [assignedTicket, setAssignedTicket] = useState<TicketAssignmentDTO | null>(null);
 
-    useEffect(() => {
-        const fetchEmployee = async () => {
-            if (!employeeId) {
-                console.error('employee id is undefined');
-                return;
-            }
-            const employeeData = await getEmployeeById(employeeId);
-            setEmployee(employeeData);
-
-            if (employeeData.departmentId) {
-                const departmentData = await getDepartmentById(employeeData.departmentId);
-                setDepartment(departmentData);
-            }
-        };
-
-        fetchEmployee();
-    }, [employeeId]);
-
-    const handleFetchTicket = async () => {
+    const fetchEmployee = async () => {
         if (!employeeId) {
-            console.error('Mitarbeiter ist undefiniert');
+            console.error('employee id is undefined');
+            return;
+        }
+        const employeeData = await getEmployeeById(employeeId);
+        setEmployee(employeeData);
+
+        if (employeeData.departmentId) {
+            const departmentData = await getDepartmentById(employeeData.departmentId);
+            setDepartment(departmentData);
+        }
+    };
+
+
+    // TODO: der 404 Fehler taucht trotzdem in der console auf, sofern noch kein Ticket IN_PROGRESS ist
+    const fetchTicket = async () => {
+        if (!employeeId) {
+            console.error('employee id is undefined');
             return;
         }
         try {
-            const assignedTicketData = await assignNextTicketToEmployee(employeeId);
+            const assignedTicketData = await getInProgressTicketByEmployeeId(employeeId);
             setAssignedTicket(assignedTicketData);
         } catch (error) {
-            console.error('Error assigning ticket', error);
+            if (error.response && error.response.status === 404) {
+                setAssignedTicket(null);
+            } else {
+                console.error('Error fetching ticket', error);
+            }
         }
+    };
+
+    useEffect(() => {
+        fetchEmployee();
+        fetchTicket();
+    }, [employeeId]);
+
+    const handleBookTicket = async () => {
+        await assignNextTicketToEmployee(employeeId);
+        await fetchTicket();
     };
 
     return (
@@ -57,9 +74,8 @@ const EmployeePage = () => {
                             <Card.Body>
                                 {employee && (
                                     <>
-                                    <p className="text-primary brighter fs-4">Mitarbeiter/-in:</p> <p className="text-primary fs-2"> {employee.name} {employee.surname}</p>
-                                        <p className="text-primary brighter fs-4">Abteilung:</p> <p className="text-primary fs-2"> {department?.name}</p>
-                                        <p className="text-primary brighter fs-4">Raum:</p><p className="text-primary fs-2">  {employee.room}</p>
+                                        <p>Name: {employee.name}</p>
+                                        <p>Abteilung: {department?.name}</p>
                                     </>
                                 )}
                             </Card.Body>
@@ -72,20 +88,17 @@ const EmployeePage = () => {
                             </Card.Header>
                             <Card.Body>
                                 <div className="d-flex align-items-baseline">
-                                    <Button variant="primary" size="lg" onClick={handleFetchTicket}> Ticket
-                                        abrufen</Button>
-                                    <p className="text-primary fs-4 mx-4">Ticket: </p>
-                                    {assignedTicket &&
-                                        <p className="text-primary brighter mx-2 fs-4">{assignedTicket.ticketNr}</p>}
+                                    <Button variant="primary" size="lg" onClick={handleBookTicket}>Ticket buchen</Button>
+                                    <p className="text-primary fs-4 mx-4">Ticket: {assignedTicket?.ticketNr}</p>
                                 </div>
 
-                                <Form className="mt-3" controlId="exampleForm.ControlTextarea1">
+                                <Form className="mt-3">
                                     <Form.Label className="text-primary fs-4">Kommentar</Form.Label>
                                     <Form.Control as="textarea" rows={4}/>
                                 </Form>
                                 <div className="d-flex align-items-baseline">
-                                    <Button variant="primary" size="lg" className="m-3"> Kunde nicht erschienen</Button>
-                                    <Button variant="primary" size="lg" className="m-3"> Ticket abschließen</Button>
+                                    <Button variant="primary" size="lg" className="m-3">Kunde nicht erschienen</Button>
+                                    <Button variant="primary" size="lg" className="m-3">Ticket abschließen</Button>
                                 </div>
                             </Card.Body>
                         </Card>

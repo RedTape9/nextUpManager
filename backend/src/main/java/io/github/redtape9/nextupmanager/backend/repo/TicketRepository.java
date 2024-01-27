@@ -30,4 +30,7 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
     List<Ticket> findAllByDepartmentId(String departmentId);
 
 
+    Optional<Ticket> findByEmployeeIdAndCurrentStatus(String employeeId, TicketStatus currentStatus);
+
+
 }
