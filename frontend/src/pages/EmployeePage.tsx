@@ -70,7 +70,7 @@ const EmployeePage = () => {
     };
 
     const handleCancelTicket = async () => {
-        if (assignedTicket.id && employeeId) {
+        if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'CANCELED',
                 commentByEmployee: comment,
@@ -86,7 +86,7 @@ const EmployeePage = () => {
     };
 
     const handleFinishTicket = async () => {
-        if (assignedTicket.id && employeeId) {
+        if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'FINISHED',
                 commentByEmployee: comment,
@@ -147,10 +147,10 @@ const EmployeePage = () => {
                     <Col md={4}>
                         <Card>
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Status
+                                Danger Zone
                             </Card.Header>
                             <Card.Body>
-                                <p>Status: {assignedTicket?.currentStatus}</p>
+                                <Button onClick={handleFinishTicket}>ALLE Tickets löschen!!!</Button>
                             </Card.Body>
                         </Card>
                     </Col>

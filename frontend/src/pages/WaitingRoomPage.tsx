@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-// import SockJS from 'sockjs-client';
-// import Stomp from 'stompjs';
+import {useState, useEffect, useRef} from 'react';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 import { getAllWaitingTickets, getAllInProgressTickets } from '../service/apiService';
 import WaitingTicketInterface from '../interfaces/WaitingTicketsInterface';
 import InProgressTicketInterface from '../interfaces/InProgressTicketsInterface';
@@ -13,29 +13,29 @@ const WaitingRoomPage = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
     const [inProgressTickets, setInProgressTickets] = useState<InProgressTicketInterface[]>([]);
     const [error, setError] = useState<string | null>(null);
-    // let stompClient: Stomp.Client | null = null;
+    const stompClient = useRef<Stomp.Client | null>(null);
 
     useEffect(() => {
-        // const socket = new SockJS('http://localhost:8080/ws');
-        // stompClient = Stomp.over(socket);
+        const socket = new SockJS('http://localhost:8080/ws');
+        stompClient.current = Stomp.over(socket);
 
-        // stompClient?.connect({}, frame => {
-        //     console.log('Connected: ' + frame);
-        //     stompClient?.subscribe('/topic/updates', () => {
-        //         fetchTickets();
-        //     });
-        // }, error => {
-        //     console.error('Connection error:', error);
-        //     setError('Failed to connect to WebSocket: ' + error);
-        // });
+        stompClient.current.connect({}, frame => {
+            console.log('Connected: ' + frame);
+            stompClient.current?.subscribe('/topic/updates', () => {
+                fetchTickets();
+            });
+        }, error => {
+            console.error('Connection error:', error);
+            setError('Failed to connect to WebSocket: ' + error);
+        });
 
-        // return () => {
-        //     if (stompClient?.connected) {
-        //         stompClient.disconnect(() => {
-        //             console.log('Disconnected');
-        //         });
-        //     }
-        // };
+        return () => {
+            if (stompClient.current?.connected) {
+                stompClient.current.disconnect(() => {
+                    console.log('Disconnected');
+                });
+            }
+        };
 
         fetchTickets();
     }, []);
