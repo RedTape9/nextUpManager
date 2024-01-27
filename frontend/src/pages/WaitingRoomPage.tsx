@@ -16,7 +16,7 @@ const WaitingRoomPage = () => {
     // let stompClient: Stomp.Client | null = null;
 
     useEffect(() => {
-        // const socket = new SockJS('http://localhost:8080/test');
+        // const socket = new SockJS('http://localhost:8080/ws');
         // stompClient = Stomp.over(socket);
 
         // stompClient?.connect({}, frame => {

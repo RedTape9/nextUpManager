@@ -1,6 +1,6 @@
 interface TicketUpdateDTO {
-    currentStatus: string;
     commentByEmployee: string;
+    currentStatus: string;
     statusHistory: Array<{status: string}>;
 }
 

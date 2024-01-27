@@ -88,6 +88,7 @@ public class TicketService {
         if (ticketOptional.isPresent()) {
             Ticket ticket = ticketOptional.get();
             TicketAssigmentDTO dto = new TicketAssigmentDTO();
+            dto.setId(ticket.getId());
             dto.setEmployeeId(ticket.getEmployeeId());
             dto.setRoom(ticket.getRoom());
             dto.setCurrentStatus(ticket.getCurrentStatus().toString());

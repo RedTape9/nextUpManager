@@ -1,4 +1,5 @@
 interface TicketAssignmentDTO {
+    _id: string;
     employeeId: string;
     room: string;
     currentStatus: string;
