@@ -1,4 +1,5 @@
 import axios from 'axios';
+import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
@@ -64,3 +65,18 @@ export const getEmployeeById = async (id: string) => {
         console.error('Error fetching employee', error);
     }
 }
+
+export const getDepartmentById = async (id: string) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
+        console.log('Fetched department:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching department', error);
+    }
+};
+
+export const assignNextTicketToEmployee = async (employeeId: string): Promise<TicketAssignmentDTO> => {
+    const response = await axios.put(`${API_BASE_URL}/next/${employeeId}`);
+    return response.data;
+};

@@ -18,7 +18,7 @@ public class DepartmentController {
     private final DepartmentService departmentService;
     private final TicketService ticketService;
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public List<Ticket> getTicketsByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
@@ -26,7 +26,7 @@ public class DepartmentController {
         }
         return ticketService.getAllTicketsByDepartmentId(department.getId());
     }
-
+    //TODO: umschreiben nach TicketController
     @GetMapping("/id/{departmentId}")
     public List<Ticket> getTicketsByDepartment(@PathVariable String departmentId) {
         return ticketService.getAllTicketsByDepartmentId(departmentId);
@@ -36,6 +36,11 @@ public class DepartmentController {
     @GetMapping
     public List<DepartmentGetForOptionDTO> getDepartments() {
         return departmentService.getAllDepartments();
+    }
+
+    @GetMapping("/{id}")
+    public DepartmentGetForOptionDTO getDepartmentById(@PathVariable String id) {
+        return departmentService.getDepartmentById(id);
     }
 
 

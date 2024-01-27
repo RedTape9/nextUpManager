@@ -79,6 +79,10 @@ public class TicketService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
+        return ticketRepository.findAllByDepartmentId(departmentId);
+    }
     public Optional<TicketGetByIdDTO> getTicketById(String id) {
         return ticketRepository.findById(id)
                 .map(ticket -> {
@@ -149,18 +153,7 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
-    public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
-        return ticketRepository.findByDepartmentId(departmentId);
-    }
 
-
-    public Department getDepartmentByName(String name) {
-        return departmentRepository.findByName(name);
-    }
-
-    public Department updateDepartment(Department department) {
-        return departmentRepository.save(department);
-    }
 
     //UPDATE for assignment
 
@@ -172,7 +165,7 @@ public class TicketService {
         }
 
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + employeeId + " nicht gefunden"));
+                .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
 
         Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt"));
         List<Ticket> tickets = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), pageable);
@@ -209,15 +202,16 @@ public class TicketService {
         dto.setRoom(updatedTicket.getRoom());
         dto.setCurrentStatus(updatedTicket.getCurrentStatus().toString());
         dto.setTimestamp(newStatusChange.getTimestamp());
+        dto.setTicketNr(updatedTicket.getTicketNr());
         dto.setStatusHistory(statusChangeDTOs);
 
 
         // Senden einer Nachricht an das Frontend
-        if (messagingTemplate != null) {
+        /*if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/updates", "Ticket zugewiesen");
         } else {
             System.err.println("SimpMessagingTemplate ist null");
-        }
+        }*/
 
 
         return dto;
@@ -249,7 +243,6 @@ public class TicketService {
             ticket.setCommentByEmployee(sanitizedComment);
         }
 
-        // Hier setzen Sie den neuen Status und fügen ihn der History hinzu
 
         Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
         newStatusChange.setStatus(newStatus);
@@ -260,6 +253,7 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    // TODO: eingabe bereinigen und validieren
     private String sanitizeInput(String input) {
         // Bereinigen und Validieren der Eingabe
         // ...

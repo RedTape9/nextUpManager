@@ -35,7 +35,7 @@ public class TicketController {
     }
 
 
-    // TODO: Getter auf DTOS umstellen
+
     @GetMapping("/waiting")
     public List<TicketGetAllDTO> getAllWaitingTickets() {
         return ticketService.getAllWaitingTickets();
@@ -70,6 +70,7 @@ public class TicketController {
         }
     }*/
 
+    // TODO: auf DTO umstellen
     // UPDATE for status change to FINISHED or CANCELED
 
     @PutMapping("/{ticketId}/status/{employeeId}")
@@ -81,9 +82,9 @@ public class TicketController {
         return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
     }
 
-    private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
+    /*private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
         return updateDTO.getCurrentStatus() != null;
-    }
+    }*/
 
     @DeleteMapping("/{id}")
     public void deleteTicket(@PathVariable String id) {

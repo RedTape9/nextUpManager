@@ -9,15 +9,15 @@ import {
     getAllEmployees
 } from "../service/apiService";
 import WaitingTicketInterface from "../interfaces/WaitingTicketsInterface";
-import DepartmentGetForOptionDTO from "../interfaces/DepartmentGetForOptionDTO";
+import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
 import EmployeeBasicInfo from "../interfaces/EmployeeBasicInfo.ts";
-import { Button, Form } from "react-bootstrap";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Ticket from "../interfaces/Ticket.ts";
 
 const MainMenu = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [departments, setDepartments] = useState<DepartmentGetForOptionDTO[]>([]);
+    const [departments, setDepartments] = useState<DepartmentGetForOption[]>([]);
     const [selectedDepartment, setSelectedDepartment] = useState<string>('');
     const [createdTicket, setCreatedTicket] = useState<Ticket | null>(null);
     const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
@@ -87,14 +87,14 @@ const MainMenu = () => {
     return (
         <>
             <NavBar />
-            <div className="container mt-3">
-                <div className="row">
-                    <div className="col-4">
-                        <div className="card">
-                            <div className="card-header w-auto bg-primary brighter text-center text-light fs-2">
+            <Container className="mt-3">
+                <Row>
+                    <Col md={4}>
+                        <Card>
+                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Ticket buchen
-                            </div>
-                            <div className="card-body">
+                            </Card.Header>
+                            <Card.Body>
                                 <p className="text-primary brighter fs-2">Abteilung auswählen</p>
                                 <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedDepartment}
                                              onChange={(e) => setSelectedDepartment(e.target.value)}>
@@ -108,24 +108,24 @@ const MainMenu = () => {
                                     Buchen
                                 </Button>
                                 {createdTicket && (
-                                    <div className="card mt-3 border-primary border-5">
-                                        <div className="card-body bg-primary brighter">
+                                    <Card className="mt-3 border-primary border-5">
+                                        <Card.Body className="bg-primary brighter">
                                             <p className="card-title text-center text-light fs-2">Buchung
                                                 erfolgreich:</p>
                                             <p className="card-text text-light text-center fs-2">Ihr
                                                 Ticket: {createdTicket.ticketNr}</p>
-                                        </div>
-                                    </div>
+                                        </Card.Body>
+                                    </Card>
                                 )}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-4">
-                        <div className="card">
-                            <div className="card-header w-auto bg-primary brighter text-center text-light fs-2">
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col md={4}>
+                        <Card>
+                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Tickets verwalten
-                            </div>
-                            <div className="card-body">
+                            </Card.Header>
+                            <Card.Body>
                                 <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedEmployee}
                                              onChange={handleSelectEmployee}>
                                     {employees.map((employee) => (
@@ -137,22 +137,22 @@ const MainMenu = () => {
                                 <Button variant="primary" size="lg" onClick={handleGoToEmployeePage}>
                                     zum Mitarbeiter
                                 </Button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-4">
-                        <div className="card">
-                            <div className="card-header w-auto bg-primary brighter text-center text-light fs-2">
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col md={4}>
+                        <Card>
+                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Warteliste
-                            </div>
-                            <div className="card-body">
+                            </Card.Header>
+                            <Card.Body>
                                 {tickets
                                     .slice(currentIndex, currentIndex + 8)
                                     .map((ticket, index) => (
-                                        <div key={index}
-                                             className="card w-auto text-bg-primary text-center m-2">
+                                        <Card key={index}
+                                              className="w-auto text-bg-primary text-center m-2">
                                             <p className="ticketNr fs-5">{ticket.ticketNr}</p>
-                                        </div>
+                                        </Card>
                                     ))
                                 }
                                 <div className="d-flex justify-content-between">
@@ -163,14 +163,14 @@ const MainMenu = () => {
                                         ▶
                                     </Button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
             <Footer/>
         </>
     );
-};
+}
 
 export default MainMenu;

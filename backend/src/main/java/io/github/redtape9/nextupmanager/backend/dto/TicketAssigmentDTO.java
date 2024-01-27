@@ -11,6 +11,7 @@ public class TicketAssigmentDTO {
     private String room;
     private String currentStatus;
     private String timestamp;
+    private String ticketNr;
     private List<StatusChangeDTO> statusHistory;
 }
 
