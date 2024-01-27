@@ -72,7 +72,7 @@ const WaitingRoomPage = () => {
                                     .slice(0, 9)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
-                                            <h2 className="ticketNr">{ticket.ticketNr}</h2>
+                                            <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
                                     ))
                                 }
@@ -90,7 +90,7 @@ const WaitingRoomPage = () => {
                                     .slice(0, 9)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
-                                            <h2 className="ticketNr">{ticket.ticketNr}</h2>
+                                            <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
                                     ))}
                             </Card.Body>
@@ -107,7 +107,7 @@ const WaitingRoomPage = () => {
                                     .slice(0, 9)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
-                                            <h2 className="ticketNr">{ticket.ticketNr}</h2>
+                                            <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
                                     ))}
                             </Card.Body>
@@ -116,13 +116,13 @@ const WaitingRoomPage = () => {
                     <Col md={6} className="d-flex align-items-center justify-content-center">
                         <Card className="w-75 h-100 d-flex align-items-center justify-content-center">
                             <Card.Header className="w-100 bg-primary brighter text-center text-light">
-                                <h1>Sie wurden aufgerufen</h1>
+                                <p className="fs-6">Sie wurden aufgerufen</p>
                             </Card.Header>
                             <Card.Body className="d-flex align-items-center justify-content-center flex-wrap">
                                 {inProgressTickets.map((ticket, index) => (
                                     <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
                                           style={{width: '350px', height: '100px'}}>
-                                        <h1 className="ticketNr">{ticket.ticketNr} Raum: {ticket.room}</h1>
+                                        <p className="ticketNr fs-6">{ticket.ticketNr} Raum: {ticket.room}</p>
                                     </Card>
                                 ))}
                             </Card.Body>
