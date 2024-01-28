@@ -7,6 +7,7 @@ import {
     getInProgressTicketByEmployeeId,
     assignNextTicketToEmployee, updateTicketStatus
 } from "../service/apiService.ts";
+import '../styles/colors.css';
 import NavBar from "../components/NavBar.tsx";
 import {Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
 import Footer from "../components/Footer.tsx";
@@ -70,41 +71,41 @@ const EmployeePage = () => {
     };
 
     const handleCancelTicket = async () => {
-        if (assignedTicket && assignedTicket.id && employeeId) {
+        if (assignedTicket && assignedTicket._id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'CANCELED',
                 commentByEmployee: comment,
                 statusHistory: [...assignedTicket.statusHistory, {status: 'CANCELED'}]
             };
-            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket._id, employeeId, updateDTO);
             setComment('');
             await fetchTicket();
         }
         else {
-            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket.id + ' employeeId: ' + employeeId);
+            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?._id + ' employeeId: ' + employeeId);
         }
     };
 
     const handleFinishTicket = async () => {
-        if (assignedTicket && assignedTicket.id && employeeId) {
+        if (assignedTicket && assignedTicket._id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'FINISHED',
                 commentByEmployee: comment,
                 statusHistory: [...assignedTicket.statusHistory, {status: 'FINISHED'}]
             };
-            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket._id, employeeId, updateDTO);
             setComment('');
             await fetchTicket();
         }
         else {
-            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket.id + ' employeeId: ' + employeeId);
+            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?._id + ' employeeId: ' + employeeId);
         }
     };
 
     return (
         <>
             <NavBar />
-            <Container className="mt-3">
+            <Container className="mt-4">
                 <Row>
                     <Col md={4}>
                         <Card>
