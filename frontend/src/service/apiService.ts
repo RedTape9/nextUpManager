@@ -98,3 +98,13 @@ export const updateTicketStatus = async (ticketId: string, employeeId: string, u
     const response = await axios.put(`${API_BASE_URL}/${ticketId}/status/${employeeId}`, updateDTO);
     return response.data;
 };
+
+export const deleteAllTickets = async () => {
+    try {
+        const response = await axios.delete(API_BASE_URL + '/deleteAll');
+        console.log('Deleted all tickets:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting all tickets', error);
+    }
+};

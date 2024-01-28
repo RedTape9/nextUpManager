@@ -5,11 +5,13 @@ import {
     getEmployeeById,
     getDepartmentById,
     getInProgressTicketByEmployeeId,
-    assignNextTicketToEmployee, updateTicketStatus
+    assignNextTicketToEmployee,
+    updateTicketStatus,
+    deleteAllTickets
 } from "../service/apiService.ts";
 import '../styles/colors.css';
 import NavBar from "../components/NavBar.tsx";
-import {Button, Card, Col, Container, Form, Row} from 'react-bootstrap';
+import {Button, Card, Col, Container, Form, Row, Alert} from 'react-bootstrap';
 import Footer from "../components/Footer.tsx";
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
@@ -20,6 +22,7 @@ const EmployeePage = () => {
     const [department, setDepartment] = useState(null);
     const [assignedTicket, setAssignedTicket] = useState<TicketAssignmentDTO | null>(null);
     const [comment, setComment] = useState<string>('');
+    const [showAlert, setShowAlert] = useState(false);
 
     const fetchEmployee = async () => {
         if (!employeeId) {
@@ -71,35 +74,44 @@ const EmployeePage = () => {
     };
 
     const handleCancelTicket = async () => {
-        if (assignedTicket && assignedTicket._id && employeeId) {
+        if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'CANCELED',
                 commentByEmployee: comment,
                 statusHistory: [...assignedTicket.statusHistory, {status: 'CANCELED'}]
             };
-            await updateTicketStatus(assignedTicket._id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
             setComment('');
             await fetchTicket();
         }
         else {
-            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?._id + ' employeeId: ' + employeeId);
+            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?.id + ' employeeId: ' + employeeId);
         }
     };
 
     const handleFinishTicket = async () => {
-        if (assignedTicket && assignedTicket._id && employeeId) {
+        if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
                 currentStatus: 'FINISHED',
                 commentByEmployee: comment,
                 statusHistory: [...assignedTicket.statusHistory, {status: 'FINISHED'}]
             };
-            await updateTicketStatus(assignedTicket._id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
             setComment('');
             await fetchTicket();
         }
         else {
-            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?._id + ' employeeId: ' + employeeId);
+            console.error('assigned ticket id is undefined assignedTickedId: ' + assignedTicket?.id + ' employeeId: ' + employeeId);
         }
+    };
+
+    const handleDeleteAllTickets = async () => {
+        setShowAlert(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        await deleteAllTickets();
+        setShowAlert(false);
     };
 
     return (
@@ -130,7 +142,7 @@ const EmployeePage = () => {
                             </Card.Header>
                             <Card.Body>
                                 <div className="d-flex align-items-baseline">
-                                    <Button variant="primary" size="lg" onClick={handleBookTicket}>Ticket buchen</Button>
+                                    <Button variant="primary" size="lg" disabled={!!assignedTicket?.ticketNr} onClick={handleBookTicket}>Ticket buchen</Button>
                                     <p className="text-primary fs-4 mx-4">Ticket: {assignedTicket?.ticketNr}</p>
                                 </div>
 
@@ -139,19 +151,33 @@ const EmployeePage = () => {
                                     <Form.Control as="textarea" rows={6} value={comment} onChange={e => setComment(e.target.value)}/>
                                 </Form>
                                 <div className="d-flex align-items-baseline">
-                                    <Button onClick={handleCancelTicket} className="m-2">Kunde nicht erschienen</Button>
-                                    <Button onClick={handleFinishTicket}>Ticket abschließen</Button>
+                                    <Button onClick={handleCancelTicket} disabled={!assignedTicket?.ticketNr} className="m-2">Kunde nicht erschienen</Button>
+                                    <Button onClick={handleFinishTicket} disabled={!assignedTicket?.ticketNr}>Ticket abschließen</Button>
                                 </div>
                             </Card.Body>
                         </Card>
                     </Col>
                     <Col md={4}>
-                        <Card>
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                        {showAlert && (
+                            <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                                <Alert.Heading>Sind Sie sich sicher?</Alert.Heading>
+                                <p className="mt-3">
+                                    Wollen Sie wirklich alle Tickets löschen?
+                                </p>
+                                <p className="mb=3">
+                                    Diese Aktion kann nicht rückgängig gemacht werden!
+                                </p>
+                                <Button variant="danger" className="mx-3" onClick={handleConfirmDelete}>Ja, lösche alles!</Button>
+                                <Button variant="primary " onClick={() => setShowAlert(false)}>Nein, besser nicht</Button>
+                            </Alert>
+                        )}
+
+                        <Card >
+                            <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
                                 Danger Zone
                             </Card.Header>
-                            <Card.Body>
-                                <Button onClick={handleFinishTicket}>ALLE Tickets löschen!!!</Button>
+                            <Card.Body className="d-flex justify-content-center">
+                                <Button variant="danger" className="fs-2" disabled={showAlert} onClick={handleDeleteAllTickets}>ALLE Tickets löschen!!!</Button>
                             </Card.Body>
                         </Card>
                     </Col>

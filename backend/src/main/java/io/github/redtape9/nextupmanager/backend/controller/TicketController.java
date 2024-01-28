@@ -24,7 +24,7 @@ public class TicketController {
     }
 
     // GET by id
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public TicketGetByIdDTO getTicketById(@PathVariable String id) {
         Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
         if (ticketOptional.isPresent()) {
@@ -32,8 +32,7 @@ public class TicketController {
         } else {
             throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
         }
-    }
-
+    }*/
 
 
     @GetMapping("/waiting")
@@ -46,11 +45,11 @@ public class TicketController {
         return ticketService.getAllInProgressTickets();
     }
 
-    @GetMapping
+    /*@GetMapping
     public List<TicketGetAllDTO> getAllTickets() {
         return ticketService.getAllTickets();
     }
-
+*/
 
 
     // in TicketController.java
@@ -66,19 +65,6 @@ public class TicketController {
     }
 
 
-    // UPDATE for simple version
-    /*@PutMapping("/{id}")
-    public Ticket updateTicket(@PathVariable String id, @RequestBody TicketCreateDTO updateDTO) {
-        if(isValidCustomerUpdateDTO(updateDTO)) {
-            return ticketService.updateTicket(id, updateDTO);
-        } else {
-            throw new IllegalArgumentException("Ticketeingaben sind nicht valide");
-        }
-    }*/
-
-    // TODO: auf DTO umstellen
-    // UPDATE for status change to FINISHED or CANCELED
-
     @PutMapping("/{ticketId}/status/{employeeId}")
     public TicketUpdateDTO updateTicketStatus(
             @PathVariable String ticketId,
@@ -88,10 +74,7 @@ public class TicketController {
         return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
     }
 
-    /*private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
-        return updateDTO.getCurrentStatus() != null;
-    }*/
-
+/*
     @DeleteMapping("/{id}")
     public void deleteTicket(@PathVariable String id) {
         Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
@@ -100,7 +83,7 @@ public class TicketController {
         } else {
             throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
         }
-    }
+    }*/
 
     @DeleteMapping("/deleteAll")
     public void deleteAllTickets(){
