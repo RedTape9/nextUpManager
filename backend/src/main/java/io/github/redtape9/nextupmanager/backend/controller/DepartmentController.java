@@ -6,21 +6,19 @@ import io.github.redtape9.nextupmanager.backend.entity.Ticket;
 import io.github.redtape9.nextupmanager.backend.service.DepartmentService;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/departments")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class DepartmentController {
     private final DepartmentService departmentService;
     private final TicketService ticketService;
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public List<Ticket> getTicketsByDepartmentName(@PathVariable String name) {
         Department department = departmentService.getDepartmentByName(name);
         if (department == null) {
@@ -28,7 +26,7 @@ public class DepartmentController {
         }
         return ticketService.getAllTicketsByDepartmentId(department.getId());
     }
-
+    //TODO: umschreiben nach TicketController
     @GetMapping("/id/{departmentId}")
     public List<Ticket> getTicketsByDepartment(@PathVariable String departmentId) {
         return ticketService.getAllTicketsByDepartmentId(departmentId);
@@ -38,6 +36,11 @@ public class DepartmentController {
     @GetMapping
     public List<DepartmentGetForOptionDTO> getDepartments() {
         return departmentService.getAllDepartments();
+    }
+
+    @GetMapping("/{id}")
+    public DepartmentGetForOptionDTO getDepartmentById(@PathVariable String id) {
+        return departmentService.getDepartmentById(id);
     }
 
 

@@ -1,9 +1,7 @@
 package io.github.redtape9.nextupmanager.backend.controller;
 
-import io.github.redtape9.nextupmanager.backend.dto.TicketUpdateDTO;
+import io.github.redtape9.nextupmanager.backend.dto.*;
 import io.github.redtape9.nextupmanager.backend.entity.Ticket;
-import io.github.redtape9.nextupmanager.backend.dto.TicketAssigmentDTO;
-import io.github.redtape9.nextupmanager.backend.dto.TicketCreateDTO;
 import io.github.redtape9.nextupmanager.backend.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tickets")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class TicketController {
     private final TicketService ticketService;
@@ -24,15 +23,41 @@ public class TicketController {
         return ticketService.createTicketWithDepartment(ticket, name);
     }
 
-    // GET
+    // GET by id
+    @GetMapping("/{id}")
+    public TicketGetByIdDTO getTicketById(@PathVariable String id) {
+        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
+        if (ticketOptional.isPresent()) {
+            return ticketOptional.get();
+        } else {
+            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
+        }
+    }
 
-    // Getter auf DTOS umstellen
+
+
+    @GetMapping("/waiting")
+    public List<TicketGetAllDTO> getAllWaitingTickets() {
+        return ticketService.getAllWaitingTickets();
+    }
+
+    @GetMapping("/in-progress")
+    public List<TicketGetAllWhereStatusInProgressDTO> getAllInProgressTickets() {
+        return ticketService.getAllInProgressTickets();
+    }
+
     @GetMapping
-    public List<Ticket> getAllTickets() {
+    public List<TicketGetAllDTO> getAllTickets() {
         return ticketService.getAllTickets();
     }
 
-    // GET for select ticket in frontend by department name
+
+
+    // in TicketController.java
+    @GetMapping("/in-progress/{employeeId}")
+    public TicketAssigmentDTO getInProgressTicketByEmployeeId(@PathVariable String employeeId) {
+        return ticketService.getInProgressTicketByEmployeeId(employeeId);
+    }
 
     // UPDATE for assigment
     @PutMapping("/next/{employeeId}")
@@ -51,10 +76,11 @@ public class TicketController {
         }
     }*/
 
+    // TODO: auf DTO umstellen
     // UPDATE for status change to FINISHED or CANCELED
 
     @PutMapping("/{ticketId}/status/{employeeId}")
-    public Ticket updateTicketStatus(
+    public TicketUpdateDTO updateTicketStatus(
             @PathVariable String ticketId,
             @PathVariable String employeeId,
             @RequestBody TicketUpdateDTO updateDTO) {
@@ -62,17 +88,17 @@ public class TicketController {
         return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
     }
 
-    private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
+    /*private boolean isValidCustomerUpdateDTO(TicketCreateDTO updateDTO) {
         return updateDTO.getCurrentStatus() != null;
-    }
+    }*/
 
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable String id) {
-        Optional<Ticket> customerOptional = ticketService.getTicketById(id);
-        if (customerOptional.isPresent()) {
+    public void deleteTicket(@PathVariable String id) {
+        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
+        if (ticketOptional.isPresent()) {
             ticketService.deleteTicket(id);
         } else {
-            throw new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden");
+            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
         }
     }
 

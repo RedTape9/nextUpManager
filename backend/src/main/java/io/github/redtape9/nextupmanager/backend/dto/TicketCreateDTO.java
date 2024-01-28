@@ -7,14 +7,14 @@ import java.util.List;
 
 @Data
 public class TicketCreateDTO {
-    private String departmentId;  // optional, falls sie geändert werden soll
+    private String departmentId;
     private TicketStatus currentStatus;
     private String employeeId;
     private String commentByEmployee;
     private String room;
-    private String customerNr;
+    private String ticketNr;
     private List<Ticket.StatusChange> statusHistory;
 
 }
 
-// dont forget to remove unnecessary fields
+// TODO: dont forget to remove unnecessary fields

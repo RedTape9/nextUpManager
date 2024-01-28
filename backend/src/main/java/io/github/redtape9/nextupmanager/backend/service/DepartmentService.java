@@ -40,6 +40,17 @@ public class DepartmentService {
                 })
                 .toList();
     }
+
+    public DepartmentGetForOptionDTO getDepartmentById(String id) {
+        Department department = departmentRepository.findById(id).orElse(null);
+        if (department == null) {
+            throw new IllegalArgumentException("Department mit id: " + id + " existiert nicht");
+        }
+        DepartmentGetForOptionDTO departmentGetForOptionDTO = new DepartmentGetForOptionDTO();
+        departmentGetForOptionDTO.setId(department.getId());
+        departmentGetForOptionDTO.setName(department.getName());
+        return departmentGetForOptionDTO;
+    }
 }
 
 
