@@ -68,7 +68,9 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public List<TicketGetAllDTO> getAllTickets() {
+    // Später fürs monitoring
+
+    /*public List<TicketGetAllDTO> getAllTickets() {
         return ticketRepository.findAll().stream()
                 .map(ticket -> {
                     TicketGetAllDTO dto = new TicketGetAllDTO();
@@ -80,7 +82,7 @@ public class TicketService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
+    }*/
 
     // TODO: möglicherweise andere DTO erstellen
     public TicketAssigmentDTO getInProgressTicketByEmployeeId(String employeeId) {
@@ -108,10 +110,10 @@ public class TicketService {
         }
     }
 
-    public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
+    /*public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
         return ticketRepository.findAllByDepartmentId(departmentId);
-    }
-    public Optional<TicketGetByIdDTO> getTicketById(String id) {
+    }*/
+    /*public Optional<TicketGetByIdDTO> getTicketById(String id) {
         return ticketRepository.findById(id)
                 .map(ticket -> {
                     TicketGetByIdDTO dto = new TicketGetByIdDTO();
@@ -121,7 +123,7 @@ public class TicketService {
                     dto.setCurrentStatus(ticket.getCurrentStatus().toString());
                     return dto;
                 });
-    }
+    }*/
 
     //CREATE
 
@@ -134,7 +136,7 @@ public class TicketService {
 
         // Logik zur Erstellung eines Tickets
         ticket.setDepartmentId(department.getId());
-        ticket.setCreatedAt(getFormattedDateTime());
+        ticket.setCreatedAt(getFormattedDateTime()); // change to LocalDateTime.now() / getFormattedDateTime()
         ticket.setCurrentStatus(TicketStatus.WAITING);
         ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
         Ticket.StatusChange statusChange = new Ticket.StatusChange();
@@ -159,32 +161,11 @@ public class TicketService {
         return createdTicket;
     }
 
-
-    //UPDATE for simle version
-    /*public Ticket updateTicket(String id, TicketCreateDTO updateDTO) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
-        updateTicketWithDTO(ticket, updateDTO);
-        return ticketRepository.save(ticket);
-    }
-
-
-    private void updateTicketWithDTO(Ticket ticket, TicketCreateDTO updateDTO) {
-        ticket.setDepartmentId(updateDTO.getDepartmentId());
-        ticket.setStatusHistory(updateDTO.getStatusHistory());
-        ticket.setCurrentStatus(updateDTO.getCurrentStatus());
-        ticket.setEmployeeId(updateDTO.getEmployeeId());
-        ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
-    }
-*/
     public void deleteTicket(String id) {
         ticketRepository.deleteById(id);
     }
 
-
-
     //UPDATE for assignment
-
 
     public TicketAssigmentDTO assignNextTicket(String employeeId) {
         boolean hasActiveTicket = ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS);
@@ -234,7 +215,7 @@ public class TicketService {
         dto.setStatusHistory(statusChangeDTOs);
 
 
-        // Senden einer Nachricht an das Frontend
+        // Senden einer Nachricht an das Frontend (websocket)
         if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/updates", "Ticket zugewiesen");
         } else {
@@ -247,7 +228,6 @@ public class TicketService {
 
     //UPDATE for status change on FINISHED or CANCELED
 
-    // in TicketService.java
 
     public TicketUpdateDTO updateTicketStatus(String ticketId, String employeeId, TicketUpdateDTO updateDTO) {
         Ticket ticket = ticketRepository.findById(ticketId)
@@ -291,11 +271,7 @@ public class TicketService {
 
 
     // TODO: eingabe bereinigen und validieren
-    private String sanitizeInput(String input) {
-        // Bereinigen und Validieren der Eingabe
-        // ...
-        return input;
-    }
+
 
     public void deleteAllTicketsAndResetDepartmentNumbers() {
         ticketRepository.deleteAll();
