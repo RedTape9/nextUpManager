@@ -2,6 +2,8 @@ package io.github.redtape9.nextupmanager.backend.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TicketGetByIdDTO {
     private String id;
@@ -11,5 +13,5 @@ public class TicketGetByIdDTO {
     private String employeeId;
     private String commentByEmployee;
     private String currentStatus;
-    private String statusHistory;
+    private List<StatusChangeDTO> statusHistory;
 }

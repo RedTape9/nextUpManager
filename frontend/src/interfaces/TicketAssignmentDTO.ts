@@ -5,7 +5,7 @@ interface TicketAssignmentDTO {
     currentStatus: string;
     timestamp: string;
     ticketNr: string;
-    statusHistory: Array<{status: string, timestamp: string}>;
+    statusHistory: Array<{status: string, timestamp: Date}>;
 }
 
 export default TicketAssignmentDTO;

@@ -21,6 +21,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -136,7 +137,7 @@ public class TicketService {
 
         // Logik zur Erstellung eines Tickets
         ticket.setDepartmentId(department.getId());
-        ticket.setCreatedAt(getFormattedDateTime()); // change to LocalDateTime.now() / getFormattedDateTime()
+        ticket.setCreatedAt(LocalDateTime.now()); // change to LocalDateTime.now() / LocalDateTime.now()
         ticket.setCurrentStatus(TicketStatus.WAITING);
         ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
         Ticket.StatusChange statusChange = new Ticket.StatusChange();
@@ -188,7 +189,7 @@ public class TicketService {
         oldestTicket.setCurrentStatus(TicketStatus.IN_PROGRESS);
         Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
         newStatusChange.setStatus(TicketStatus.IN_PROGRESS);
-        newStatusChange.setTimestamp(getFormattedDateTime());
+        newStatusChange.setTimestamp(LocalDateTime.now());
         oldestTicket.getStatusHistory().add(newStatusChange);
 
         oldestTicket.setRoom(employee.getRoom());
@@ -249,7 +250,7 @@ public class TicketService {
 
         Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
         newStatusChange.setStatus(newStatus);
-        newStatusChange.setTimestamp(LocalDateTimeFormatter.getFormattedDateTime());
+        newStatusChange.setTimestamp(LocalDateTime.now());
         ticket.getStatusHistory().add(newStatusChange);
 
 
