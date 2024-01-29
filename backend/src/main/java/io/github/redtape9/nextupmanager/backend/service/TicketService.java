@@ -11,7 +11,7 @@ import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 
 
-import io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
 
-import static io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter.getFormattedDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -162,9 +162,6 @@ public class TicketService {
         return createdTicket;
     }
 
-    public void deleteTicket(String id) {
-        ticketRepository.deleteById(id);
-    }
 
     //UPDATE for assignment
 

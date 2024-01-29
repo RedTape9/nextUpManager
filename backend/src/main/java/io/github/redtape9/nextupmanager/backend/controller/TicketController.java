@@ -45,11 +45,6 @@ public class TicketController {
         return ticketService.getAllInProgressTickets();
     }
 
-    /*@GetMapping
-    public List<TicketGetAllDTO> getAllTickets() {
-        return ticketService.getAllTickets();
-    }
-*/
 
 
     // in TicketController.java
