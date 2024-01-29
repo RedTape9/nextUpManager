@@ -1,6 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
-// import SockJS from 'sockjs-client';
-// import Stomp from 'stompjs';
+import {useState, useEffect} from 'react';
 import { getAllWaitingTickets, getAllInProgressTickets } from '../service/apiService';
 import WaitingTicketInterface from '../interfaces/WaitingTicketsInterface';
 import InProgressTicketInterface from '../interfaces/InProgressTicketsInterface';
