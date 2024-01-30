@@ -98,11 +98,11 @@ const MainMenu = () => {
     };
 
     const handlePrevious = () => {
-        setCurrentIndex(oldIndex => Math.max(oldIndex - 8, 0));
+        setCurrentIndex(oldIndex => Math.max(oldIndex - 7, 0));
     };
 
     const handleNext = () => {
-        setCurrentIndex(oldIndex => Math.min(oldIndex + 8, tickets.length - 1));
+        setCurrentIndex(oldIndex => Math.min(oldIndex + 7, tickets.length - 1));
     };
 
     return (
