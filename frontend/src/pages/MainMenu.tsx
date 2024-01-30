@@ -108,10 +108,10 @@ const MainMenu = () => {
     return (
         <>
             <NavBar />
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={4}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Ticket buchen
                             </Card.Header>
@@ -142,7 +142,7 @@ const MainMenu = () => {
                         </Card>
                     </Col>
                     <Col md={4}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Tickets verwalten
                             </Card.Header>
@@ -163,19 +163,23 @@ const MainMenu = () => {
                         </Card>
                     </Col>
                     <Col md={4}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Warteliste
                             </Card.Header>
                             <Card.Body>
-                                {tickets
-                                    .slice(currentIndex, currentIndex + 8)
+                                {
+                                    tickets.length === 0 ? (
+                                        <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
+                                    ) :(
+                                    tickets
+                                    .slice(currentIndex, currentIndex + 7)
                                     .map((ticket, index) => (
                                         <Card key={index}
                                               className="w-auto text-bg-primary text-center m-2">
                                             <p className="ticketNr fs-5">{ticket.ticketNr}</p>
                                         </Card>
-                                    ))
+                                    )))
                                 }
                                 <div className="d-flex justify-content-between m-2 ">
                                     <Button className="bg-primary brighter" onClick={handlePrevious}>

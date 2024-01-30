@@ -8,7 +8,7 @@ const HomePage = () => {
     return (
         <>
             <NavBar/>
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={12}>
                         <Card className="border-info">

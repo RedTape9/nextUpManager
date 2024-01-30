@@ -122,10 +122,10 @@ const EmployeePage = () => {
     return (
         <>
             <NavBar />
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={4}>
-                        <Card>
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Mitarbeiter Details
                             </Card.Header>
@@ -141,7 +141,7 @@ const EmployeePage = () => {
                         </Card>
                     </Col>
                     <Col md={4}>
-                        <Card>
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Bearbeitung
                             </Card.Header>

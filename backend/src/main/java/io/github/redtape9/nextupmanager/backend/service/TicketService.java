@@ -9,9 +9,6 @@ import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -40,7 +37,7 @@ public class TicketService {
                     dto.setId(ticket.getId());
                     dto.setDepartmentId(ticket.getDepartmentId());
                     dto.setTicketNr(ticket.getTicketNr());
-                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
+                    dto.setCurrentStatus(ticket.getCurrentStatus());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -66,13 +63,12 @@ public class TicketService {
             dto.setId(ticket.getId());
             dto.setEmployeeId(ticket.getEmployeeId());
             dto.setRoom(ticket.getRoom());
-            dto.setCurrentStatus(ticket.getCurrentStatus().toString());
-            dto.setTimestamp(ticket.getCreatedAt());
+            dto.setCurrentStatus(ticket.getCurrentStatus());
             dto.setTicketNr(ticket.getTicketNr());
             dto.setStatusHistory(ticket.getStatusHistory().stream()
                     .map(sc -> {
                         StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                        statusChangeDTO.setStatus(sc.getStatus().toString());
+                        statusChangeDTO.setStatus(sc.getStatus());
                         statusChangeDTO.setTimestamp(sc.getTimestamp());
                         return statusChangeDTO;
                     })
@@ -155,12 +151,8 @@ public class TicketService {
     }
 
     private Ticket getOldestTicket(Employee employee) {
-        Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt"));
-        List<Ticket> tickets = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), pageable);
-        if (tickets.isEmpty()) {
-            throw new IllegalArgumentException("Keine Tickets im Wartestatus gefunden");
-        }
-        return tickets.getFirst();
+        Optional<Ticket> oldestTicket = ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING);
+        return oldestTicket.orElseThrow(() -> new IllegalArgumentException("Kein Ticket im Wartestatus gefunden"));
     }
 
     private void updateTicketStatus(Ticket ticket, Employee employee, TicketStatus status) {
@@ -174,13 +166,12 @@ public class TicketService {
         TicketAssigmentDTO dto = new TicketAssigmentDTO();
         dto.setEmployeeId(ticket.getEmployeeId());
         dto.setRoom(ticket.getRoom());
-        dto.setCurrentStatus(ticket.getCurrentStatus().toString());
-        dto.setTimestamp(ticket.getCreatedAt());
+        dto.setCurrentStatus(ticket.getCurrentStatus());
         dto.setTicketNr(ticket.getTicketNr());
         dto.setStatusHistory(ticket.getStatusHistory().stream()
                 .map(sc -> {
                     StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                    statusChangeDTO.setStatus(sc.getStatus().toString());
+                    statusChangeDTO.setStatus(sc.getStatus());
                     statusChangeDTO.setTimestamp(sc.getTimestamp());
                     return statusChangeDTO;
                 })
@@ -208,7 +199,7 @@ public class TicketService {
 
     private TicketStatus getTicketStatus(TicketUpdateDTO updateDTO) {
         try {
-            return TicketStatus.valueOf(updateDTO.getCurrentStatus().toUpperCase());
+            return updateDTO.getCurrentStatus();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Ungültiger Status: " + updateDTO.getCurrentStatus());
         }
@@ -216,12 +207,12 @@ public class TicketService {
 
     private TicketUpdateDTO createTicketUpdateDTO(Ticket ticket) {
         TicketUpdateDTO ticketUpdateDTO = new TicketUpdateDTO();
-        ticketUpdateDTO.setCurrentStatus(ticket.getCurrentStatus().toString());
+        ticketUpdateDTO.setCurrentStatus(ticket.getCurrentStatus());
         ticketUpdateDTO.setCommentByEmployee(ticket.getCommentByEmployee());
         ticketUpdateDTO.setStatusHistory(ticket.getStatusHistory().stream()
                 .map(sc -> {
                     StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                    statusChangeDTO.setStatus(sc.getStatus().toString());
+                    statusChangeDTO.setStatus(sc.getStatus());
                     statusChangeDTO.setTimestamp(sc.getTimestamp());
                     return statusChangeDTO;
                 })
