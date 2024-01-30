@@ -23,18 +23,6 @@ public class TicketController {
         return ticketService.createTicketWithDepartment(ticket, name);
     }
 
-    // GET by id
-    /*@GetMapping("/{id}")
-    public TicketGetByIdDTO getTicketById(@PathVariable String id) {
-        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
-        if (ticketOptional.isPresent()) {
-            return ticketOptional.get();
-        } else {
-            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
-        }
-    }*/
-
-
     @GetMapping("/waiting")
     public List<TicketGetAllDTO> getAllWaitingTickets() {
         return ticketService.getAllWaitingTickets();
@@ -45,11 +33,6 @@ public class TicketController {
         return ticketService.getAllInProgressTickets();
     }
 
-    /*@GetMapping
-    public List<TicketGetAllDTO> getAllTickets() {
-        return ticketService.getAllTickets();
-    }
-*/
 
 
     // in TicketController.java
@@ -73,17 +56,6 @@ public class TicketController {
 
         return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
     }
-
-/*
-    @DeleteMapping("/{id}")
-    public void deleteTicket(@PathVariable String id) {
-        Optional<TicketGetByIdDTO> ticketOptional = ticketService.getTicketById(id);
-        if (ticketOptional.isPresent()) {
-            ticketService.deleteTicket(id);
-        } else {
-            throw new IllegalArgumentException("Ticket mit der id: " + id + " nicht gefunden");
-        }
-    }*/
 
     @DeleteMapping("/deleteAll")
     public void deleteAllTickets(){

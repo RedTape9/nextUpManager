@@ -1,6 +1,5 @@
 package io.github.redtape9.nextupmanager.backend.service;
 
-
 import io.github.redtape9.nextupmanager.backend.dto.*;
 import io.github.redtape9.nextupmanager.backend.entity.Ticket;
 import io.github.redtape9.nextupmanager.backend.entity.TicketStatus;
@@ -9,38 +8,26 @@ import io.github.redtape9.nextupmanager.backend.entity.Employee;
 import io.github.redtape9.nextupmanager.backend.repo.DepartmentRepository;
 import io.github.redtape9.nextupmanager.backend.repo.TicketRepository;
 import io.github.redtape9.nextupmanager.backend.repo.EmployeeRepository;
-
-
-import io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
-
-import static io.github.redtape9.nextupmanager.backend.utils.LocalDateTimeFormatter.getFormattedDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
 
     private final TicketRepository ticketRepository;
-
     private final DepartmentRepository departmentRepository;
-
     private final EmployeeRepository employeeRepository;
-
     private final DepartmentService departmentService;
-
     private final SimpMessagingTemplate messagingTemplate;
-
 
     public List<TicketGetAllDTO> getAllWaitingTickets() {
         return ticketRepository.findAllByCurrentStatus(TicketStatus.WAITING)
@@ -50,7 +37,7 @@ public class TicketService {
                     dto.setId(ticket.getId());
                     dto.setDepartmentId(ticket.getDepartmentId());
                     dto.setTicketNr(ticket.getTicketNr());
-                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
+                    dto.setCurrentStatus(ticket.getCurrentStatus());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -68,21 +55,6 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public List<TicketGetAllDTO> getAllTickets() {
-        return ticketRepository.findAll().stream()
-                .map(ticket -> {
-                    TicketGetAllDTO dto = new TicketGetAllDTO();
-                    dto.setId(ticket.getId());
-                    dto.setDepartmentId(ticket.getDepartmentId());
-                    dto.setTicketNr(ticket.getTicketNr());
-                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
-
-    // TODO: möglicherweise andere DTO erstellen
     public TicketAssigmentDTO getInProgressTicketByEmployeeId(String employeeId) {
         Optional<Ticket> ticketOptional = ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS);
         if (ticketOptional.isPresent()) {
@@ -91,13 +63,12 @@ public class TicketService {
             dto.setId(ticket.getId());
             dto.setEmployeeId(ticket.getEmployeeId());
             dto.setRoom(ticket.getRoom());
-            dto.setCurrentStatus(ticket.getCurrentStatus().toString());
-            dto.setTimestamp(ticket.getCreatedAt());
+            dto.setCurrentStatus(ticket.getCurrentStatus());
             dto.setTicketNr(ticket.getTicketNr());
             dto.setStatusHistory(ticket.getStatusHistory().stream()
                     .map(sc -> {
                         StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                        statusChangeDTO.setStatus(sc.getStatus().toString());
+                        statusChangeDTO.setStatus(sc.getStatus());
                         statusChangeDTO.setTimestamp(sc.getTimestamp());
                         return statusChangeDTO;
                     })
@@ -108,193 +79,145 @@ public class TicketService {
         }
     }
 
-    public List<Ticket> getAllTicketsByDepartmentId(String departmentId) {
-        return ticketRepository.findAllByDepartmentId(departmentId);
-    }
-    public Optional<TicketGetByIdDTO> getTicketById(String id) {
-        return ticketRepository.findById(id)
-                .map(ticket -> {
-                    TicketGetByIdDTO dto = new TicketGetByIdDTO();
-                    dto.setId(ticket.getId());
-                    dto.setDepartmentId(ticket.getDepartmentId());
-                    dto.setTicketNr(ticket.getTicketNr());
-                    dto.setCurrentStatus(ticket.getCurrentStatus().toString());
-                    return dto;
-                });
-    }
-
-    //CREATE
-
     public Ticket createTicketWithDepartment(Ticket ticket, String departmentName) {
-        // weitere DTO hier?
+        Department department = getDepartmentByName(departmentName);
+        prepareTicket(ticket, department);
+        Ticket createdTicket = saveTicket(ticket);
+        updateDepartment(department);
+        sendNotification(createdTicket);
+        return createdTicket;
+    }
+
+    private Department getDepartmentByName(String departmentName) {
         Department department = departmentRepository.findByName(departmentName);
         if (department == null) {
             throw new IllegalArgumentException("Department mit Namen: " + departmentName + " existiert nicht");
         }
+        return department;
+    }
 
-        // Logik zur Erstellung eines Tickets
+    private void prepareTicket(Ticket ticket, Department department) {
         ticket.setDepartmentId(department.getId());
-        ticket.setCreatedAt(getFormattedDateTime());
+        ticket.setCreatedAt(LocalDateTime.now());
         ticket.setCurrentStatus(TicketStatus.WAITING);
         ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
+        addStatusChange(ticket, TicketStatus.WAITING);
+    }
+
+    private void addStatusChange(Ticket ticket, TicketStatus status) {
         Ticket.StatusChange statusChange = new Ticket.StatusChange();
-        statusChange.setStatus(TicketStatus.WAITING);
-        statusChange.setTimestamp(ticket.getCreatedAt());
+        statusChange.setStatus(status);
+        statusChange.setTimestamp(LocalDateTime.now());
         ticket.getStatusHistory().add(statusChange);
+    }
 
-        Ticket createdTicket = ticketRepository.save(ticket);
+    private Ticket saveTicket(Ticket ticket) {
+        return ticketRepository.save(ticket);
+    }
 
-
-        // Aktualisieren der currentNumber in Department
+    private void updateDepartment(Department department) {
         department.setCurrentNumber(department.getCurrentNumber() + 1);
         departmentService.updateDepartment(department);
+    }
 
-        // Senden einer Nachricht an das Frontend
+    private void sendNotification(Ticket ticket) {
         if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/updates", "Neues Ticket erstellt: " + ticket.getTicketNr());
         } else {
             System.err.println("SimpMessagingTemplate ist null");
         }
-
-        return createdTicket;
     }
-
-
-    //UPDATE for simle version
-    /*public Ticket updateTicket(String id, TicketCreateDTO updateDTO) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Kunde mit der id: " + id + " nicht gefunden"));
-        updateTicketWithDTO(ticket, updateDTO);
-        return ticketRepository.save(ticket);
-    }
-
-
-    private void updateTicketWithDTO(Ticket ticket, TicketCreateDTO updateDTO) {
-        ticket.setDepartmentId(updateDTO.getDepartmentId());
-        ticket.setStatusHistory(updateDTO.getStatusHistory());
-        ticket.setCurrentStatus(updateDTO.getCurrentStatus());
-        ticket.setEmployeeId(updateDTO.getEmployeeId());
-        ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
-    }
-*/
-    public void deleteTicket(String id) {
-        ticketRepository.deleteById(id);
-    }
-
-
-
-    //UPDATE for assignment
-
 
     public TicketAssigmentDTO assignNextTicket(String employeeId) {
+        checkActiveTicket(employeeId);
+        Employee employee = getEmployeeById(employeeId);
+        Ticket oldestTicket = getOldestTicket(employee);
+        updateTicketStatus(oldestTicket, employee, TicketStatus.IN_PROGRESS);
+        Ticket updatedTicket = saveTicket(oldestTicket);
+        sendNotification(updatedTicket);
+        return createTicketAssignmentDTO(updatedTicket);
+    }
+
+    private void checkActiveTicket(String employeeId) {
         boolean hasActiveTicket = ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS);
         if (hasActiveTicket) {
             throw new IllegalStateException("Mitarbeiter hat bereits ein aktives Ticket in Bearbeitung");
         }
-
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
-
-        Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt"));
-        List<Ticket> tickets = ticketRepository.findFirstByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), pageable);
-
-        if (tickets.isEmpty()) {
-            throw new IllegalArgumentException("Keine Tickets im Wartestatus gefunden");
-        }
-
-        Ticket oldestTicket = tickets.getFirst();
-
-        oldestTicket.setCurrentStatus(TicketStatus.IN_PROGRESS);
-        Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
-        newStatusChange.setStatus(TicketStatus.IN_PROGRESS);
-        newStatusChange.setTimestamp(getFormattedDateTime());
-        oldestTicket.getStatusHistory().add(newStatusChange);
-
-        oldestTicket.setRoom(employee.getRoom());
-        oldestTicket.setEmployeeId(employeeId);
-
-        Ticket updatedTicket = ticketRepository.save(oldestTicket);
-
-        List<StatusChangeDTO> statusChangeDTOs = updatedTicket.getStatusHistory().stream()
-                .map(sc -> {
-                    StatusChangeDTO dto = new StatusChangeDTO();
-                    dto.setStatus(sc.getStatus().toString());
-                    dto.setTimestamp(sc.getTimestamp());
-                    return dto;
-                })
-                .collect(Collectors.toList());
-
-        TicketAssigmentDTO dto = new TicketAssigmentDTO();
-
-        dto.setEmployeeId(updatedTicket.getEmployeeId());
-        dto.setRoom(updatedTicket.getRoom());
-        dto.setCurrentStatus(updatedTicket.getCurrentStatus().toString());
-        dto.setTimestamp(newStatusChange.getTimestamp());
-        dto.setTicketNr(updatedTicket.getTicketNr());
-        dto.setStatusHistory(statusChangeDTOs);
-
-
-        // Senden einer Nachricht an das Frontend
-        if (messagingTemplate != null) {
-            messagingTemplate.convertAndSend("/topic/updates", "Ticket zugewiesen");
-        } else {
-            System.err.println("SimpMessagingTemplate ist null");
-        }
-
-
-        return dto;
     }
 
-    //UPDATE for status change on FINISHED or CANCELED
+    private Employee getEmployeeById(String employeeId) {
+        return employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
+    }
 
-    // in TicketService.java
+    private Ticket getOldestTicket(Employee employee) {
+        Optional<Ticket> oldestTicket = ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING);
+        return oldestTicket.orElseThrow(() -> new IllegalArgumentException("Kein Ticket im Wartestatus gefunden"));
+    }
 
-    public TicketUpdateDTO updateTicketStatus(String ticketId, String employeeId, TicketUpdateDTO updateDTO) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + ticketId + " nicht gefunden"));
+    private void updateTicketStatus(Ticket ticket, Employee employee, TicketStatus status) {
+        ticket.setCurrentStatus(status);
+        ticket.setRoom(employee.getRoom());
+        ticket.setEmployeeId(employee.getId());
+        addStatusChange(ticket, status);
+    }
 
-        if (!ticket.getEmployeeId().equals(employeeId) || ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Ticket kann nicht aktualisiert werden, da der Mitarbeiter oder der Status nicht valide ist");
-        }
-
-        TicketStatus newStatus;
-        try {
-            newStatus = TicketStatus.valueOf(updateDTO.getCurrentStatus().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Ungültiger Status: " + updateDTO.getCurrentStatus());
-        }
-
-        ticket.setCurrentStatus(newStatus);
-        ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
-
-        Ticket.StatusChange newStatusChange = new Ticket.StatusChange();
-        newStatusChange.setStatus(newStatus);
-        newStatusChange.setTimestamp(LocalDateTimeFormatter.getFormattedDateTime());
-        ticket.getStatusHistory().add(newStatusChange);
-
-
-        TicketUpdateDTO ticketUpdateDTO = new TicketUpdateDTO();
-        ticketUpdateDTO.setCurrentStatus(ticket.getCurrentStatus().toString());
-        ticketUpdateDTO.setCommentByEmployee(ticket.getCommentByEmployee());
-        ticketUpdateDTO.setStatusHistory(ticket.getStatusHistory().stream()
+    private TicketAssigmentDTO createTicketAssignmentDTO(Ticket ticket) {
+        TicketAssigmentDTO dto = new TicketAssigmentDTO();
+        dto.setEmployeeId(ticket.getEmployeeId());
+        dto.setRoom(ticket.getRoom());
+        dto.setCurrentStatus(ticket.getCurrentStatus());
+        dto.setTicketNr(ticket.getTicketNr());
+        dto.setStatusHistory(ticket.getStatusHistory().stream()
                 .map(sc -> {
                     StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                    statusChangeDTO.setStatus(sc.getStatus().toString());
+                    statusChangeDTO.setStatus(sc.getStatus());
                     statusChangeDTO.setTimestamp(sc.getTimestamp());
                     return statusChangeDTO;
                 })
                 .collect(Collectors.toList()));
-        ticketRepository.save(ticket);
-
-        return ticketUpdateDTO;
+        return dto;
     }
 
+    public TicketUpdateDTO updateTicketStatus(String ticketId, String employeeId, TicketUpdateDTO updateDTO) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + ticketId + " nicht gefunden"));
+        if (!ticket.getEmployeeId().equals(employeeId) || ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Ticket kann nicht aktualisiert werden, da der Mitarbeiter oder der Status nicht valide ist");
+        }
+        TicketStatus newStatus = getTicketStatus(updateDTO);
+        updateTicket(ticket, updateDTO, newStatus);
+        Ticket updatedTicket = saveTicket(ticket);
+        return createTicketUpdateDTO(updatedTicket);
+    }
 
-    // TODO: eingabe bereinigen und validieren
-    private String sanitizeInput(String input) {
-        // Bereinigen und Validieren der Eingabe
-        // ...
-        return input;
+    private void updateTicket(Ticket ticket, TicketUpdateDTO updateDTO, TicketStatus status) {
+        ticket.setCurrentStatus(status);
+        ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
+        addStatusChange(ticket, status);
+    }
+
+    private TicketStatus getTicketStatus(TicketUpdateDTO updateDTO) {
+        try {
+            return updateDTO.getCurrentStatus();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Ungültiger Status: " + updateDTO.getCurrentStatus());
+        }
+    }
+
+    private TicketUpdateDTO createTicketUpdateDTO(Ticket ticket) {
+        TicketUpdateDTO ticketUpdateDTO = new TicketUpdateDTO();
+        ticketUpdateDTO.setCurrentStatus(ticket.getCurrentStatus());
+        ticketUpdateDTO.setCommentByEmployee(ticket.getCommentByEmployee());
+        ticketUpdateDTO.setStatusHistory(ticket.getStatusHistory().stream()
+                .map(sc -> {
+                    StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
+                    statusChangeDTO.setStatus(sc.getStatus());
+                    statusChangeDTO.setTimestamp(sc.getTimestamp());
+                    return statusChangeDTO;
+                })
+                .collect(Collectors.toList()));
+        return ticketUpdateDTO;
     }
 
     public void deleteAllTicketsAndResetDepartmentNumbers() {
@@ -302,10 +225,7 @@ public class TicketService {
         List<Department> departments = departmentRepository.findAll();
         for (Department department : departments) {
             department.setCurrentNumber(100);
-            departmentRepository.save(department);
+            departmentService.updateDepartment(department);
         }
     }
-
-
-
 }

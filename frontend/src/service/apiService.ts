@@ -1,6 +1,7 @@
 import axios from 'axios';
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
+import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
@@ -27,6 +28,18 @@ export const getAllInProgressTickets = async () => {
     }
 }
 
+export const getInProgressTicketByEmployeeId = async (employeeId: string): Promise<TicketAssignmentDTO | null> => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/in-progress/${employeeId}`);
+        return response.data;
+    } catch (error: any) {
+        if (error.response?.status === 404) {
+            return null;
+        }
+        throw error;
+    }
+};
+
 export const getAllDepartments = async () => {
     try {
         const response = await axios.get(API_BASE_URL_DEPARTMENTS);
@@ -37,13 +50,24 @@ export const getAllDepartments = async () => {
     }
 };
 
-export const createTicketWithDepartment = async (departmentName: string) => {
+/*export const getDepartmentById = async (id: string) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
-        console.log('Created ticket:', response.data);
+        const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
+        console.log('Fetched department:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error creating ticket', error);
+        console.error('Error fetching department', error);
+    }
+};*/
+
+export const getDepartmentById = async (id: string): Promise<DepartmentGetForOption | null> => {
+    try {
+        const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
+        console.log('Fetched department:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching department', error);
+        return null;
     }
 };
 
@@ -67,13 +91,14 @@ export const getEmployeeById = async (id: string) => {
     }
 }
 
-export const getDepartmentById = async (id: string) => {
+
+export const createTicketWithDepartment = async (departmentName: string) => {
     try {
-        const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
-        console.log('Fetched department:', response.data);
+        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
+        console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching department', error);
+        console.error('Error creating ticket', error);
     }
 };
 
@@ -82,17 +107,6 @@ export const assignNextTicketToEmployee = async (employeeId: string): Promise<Ti
     return response.data;
 };
 
-export const getInProgressTicketByEmployeeId = async (employeeId: string): Promise<TicketAssignmentDTO | null> => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/in-progress/${employeeId}`);
-        return response.data;
-    } catch (error: any) {
-        if (error.response?.status === 404) {
-            return null;
-        }
-        throw error;
-    }
-};
 
 export const updateTicketStatus = async (ticketId: string, employeeId: string, updateDTO: TicketUpdateDTO) => {
     const response = await axios.put(`${API_BASE_URL}/${ticketId}/status/${employeeId}`, updateDTO);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import EmployeeDetailInfo from "../interfaces/EmployeeDetailInfo.ts";
 import {
@@ -15,16 +15,17 @@ import {Button, Card, Col, Container, Form, Row, Alert} from 'react-bootstrap';
 import Footer from "../components/Footer.tsx";
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
+import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
 
 const EmployeePage = () => {
     const { employeeId } = useParams<{ employeeId: string }>();
     const [employee, setEmployee] = useState<EmployeeDetailInfo | null>(null);
-    const [department, setDepartment] = useState(null);
+    const [department, setDepartment] = useState<DepartmentGetForOption | null>(null);
     const [assignedTicket, setAssignedTicket] = useState<TicketAssignmentDTO | null>(null);
     const [comment, setComment] = useState<string>('');
     const [showAlert, setShowAlert] = useState(false);
 
-    const fetchEmployee = async () => {
+    const fetchEmployee = useCallback(async () => {
         if (!employeeId) {
             console.error('employee id is undefined');
             return;
@@ -36,31 +37,35 @@ const EmployeePage = () => {
             const departmentData = await getDepartmentById(employeeData.departmentId);
             setDepartment(departmentData);
         }
-    };
+    }, [employeeId]);
 
-    const fetchTicket = async () => {
+    const fetchTicket = useCallback(async () => {
         if (!employeeId) {
             console.error('employee id is undefined');
             return;
         }
         try {
             const assignedTicketData = await getInProgressTicketByEmployeeId(employeeId);
-            console.log("test: " + JSON.stringify(assignedTicketData, null, 2));
             setAssignedTicket(assignedTicketData);
-            console.log("test: " + JSON.stringify(assignedTicket, null, 2));
         } catch (error) {
             if (error instanceof Error) {
                 console.error(error.message);
             }
         }
-    };
-
-
+    }, [employeeId]);
 
     useEffect(() => {
-        fetchEmployee();
-        fetchTicket();
-    }, [employeeId]);
+        const fetchData = async () => {
+            if (fetchEmployee) {
+                await fetchEmployee();
+            }
+            if (fetchTicket) {
+                await fetchTicket();
+            }
+        };
+
+        fetchData();
+    }, [employeeId, fetchEmployee, fetchTicket]);
 
     useEffect(() => {
         console.log("Assigned Ticket nach Update: ", assignedTicket);
@@ -117,10 +122,10 @@ const EmployeePage = () => {
     return (
         <>
             <NavBar />
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={4}>
-                        <Card>
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Mitarbeiter Details
                             </Card.Header>
@@ -136,7 +141,7 @@ const EmployeePage = () => {
                         </Card>
                     </Col>
                     <Col md={4}>
-                        <Card>
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
                                 Bearbeitung
                             </Card.Header>

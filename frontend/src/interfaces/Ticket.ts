@@ -1,12 +1,12 @@
 interface Ticket {
     commentByEmployee: string | null;
-    createdAt: string;
+    createdAt: Date;
     currentStatus: string;
     departmentId: string;
     employeeId: string | null;
     id: string;
     room: string | null;
-    statusHistory: Array<{status: string, timestamp: string}>;
+    statusHistory: Array<{status: string, timestamp: Date}>;
     ticketNr: string;
 }
 

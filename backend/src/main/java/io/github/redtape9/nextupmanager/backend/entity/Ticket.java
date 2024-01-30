@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +20,14 @@ public class Ticket {
     private String ticketNr;
     private List<StatusChange> statusHistory = new ArrayList<>();
     private TicketStatus currentStatus;
-    private String createdAt;
+    private LocalDateTime createdAt;
     private String employeeId;
     private String room;
     private String commentByEmployee;
     @Data
     public static class StatusChange {
         private TicketStatus status;
-        private String timestamp;
+        private LocalDateTime timestamp;
     }
 
 }

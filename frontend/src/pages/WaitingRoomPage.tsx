@@ -1,6 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
-// import SockJS from 'sockjs-client';
-// import Stomp from 'stompjs';
+import {useState, useEffect} from 'react';
 import { getAllWaitingTickets, getAllInProgressTickets } from '../service/apiService';
 import WaitingTicketInterface from '../interfaces/WaitingTicketsInterface';
 import InProgressTicketInterface from '../interfaces/InProgressTicketsInterface';
@@ -59,72 +57,87 @@ const WaitingRoomPage = () => {
     return (
         <>
             <NavBar />
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={2}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p><p className="mb-1">Einwohnermeldeamt</p>
                             </Card.Header>
                             <Card.Body>
-                                {tickets
+                                {
+                                    tickets.length === 0 ? (
+                                        <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
+                                    ) :(
+                                    tickets
                                     .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'E')
                                     .slice(0, 7)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                             <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
-                                    ))
+                                    )))
                                 }
                             </Card.Body>
                         </Card>
                     </Col>
                     <Col md={2}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p><p className="mb-1">Standesamt</p>
                             </Card.Header>
                             <Card.Body>
-                                {tickets
+                                {
+                                    tickets.length === 0 ? (
+                                        <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
+                                    ) :(
+                                    tickets
                                     .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'S')
                                     .slice(0, 7)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                             <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
-                                    ))}
+                                    )))}
                             </Card.Body>
                         </Card>
                     </Col>
                     <Col md={2}>
-                        <Card className="border-info">
+                        <Card className="border-info mb-3">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p> <p className="mb-1">KFZ-Zulassungsstelle</p>
                             </Card.Header>
                             <Card.Body>
-                                {tickets
+                                {tickets.length === 0 ? (
+                                        <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
+                                    ) :(
+                                    tickets
                                     .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'K')
                                     .slice(0, 7)
                                     .map((ticket, index) => (
                                         <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                             <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                         </Card>
-                                    ))}
+                                    )))}
                             </Card.Body>
                         </Card>
                     </Col>
                     <Col md={6} className="d-flex align-items-center justify-content-center">
-                        <Card className=" border-info w-75 h-100 d-flex align-items-center justify-content-center">
+                        <Card className=" border-info mb-2 w-75 h-100 d-flex align-items-center justify-content-center">
                             <Card.Header className="w-100 bg-primary brighter text-center text-light">
                                 <p className="fs-2">Sie wurden aufgerufen</p>
                             </Card.Header>
                             <Card.Body className="d-flex align-items-center justify-content-center flex-wrap">
-                                {inProgressTickets.map((ticket, index) => (
-                                    <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
-                                          style={{width: '350px', height: '100px'}}>
-                                        <p className="ticketNr fs-2">{ticket.ticketNr} Raum: {ticket.room}</p>
-                                    </Card>
-                                ))}
+                                {tickets.length === 0 ? (
+                                    <p className="w-auto text-primary brighter fs-2 text-center m-2">Derzeit keine Aufrufe</p>
+                                ) :(
+                                    inProgressTickets.map((ticket, index) => (
+                                        <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
+                                              style={{width: '350px', height: '100px'}}>
+                                            <p className="ticketNr fs-2">{ticket.ticketNr} Raum: {ticket.room}</p>
+                                        </Card>
+                                    ))
+                                )}
                             </Card.Body>
                         </Card>
                     </Col>
