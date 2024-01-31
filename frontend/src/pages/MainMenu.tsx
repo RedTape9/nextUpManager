@@ -190,14 +190,16 @@ const MainMenu = () => {
                                                 </Card>
                                             )))
                                 }
-                                <div className="d-flex justify-content-between m-2 ">
-                                    <Button className="bg-primary brighter" onClick={handlePrevious}>
-                                        ◀
-                                    </Button>
-                                    <Button className="bg-primary brighter" onClick={handleNext}>
-                                        ▶
-                                    </Button>
-                                </div>
+                                {tickets.length > 7 && (
+                                    <div className="d-flex justify-content-between m-2 ">
+                                        <Button className="bg-primary brighter" onClick={handlePrevious}>
+                                            ◀
+                                        </Button>
+                                        <Button className="bg-primary brighter" onClick={handleNext}>
+                                            ▶
+                                        </Button>
+                                    </div>
+                                )}
                             </Card.Body>
                         </Card>
                     </Col>
