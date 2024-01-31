@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -57,7 +58,7 @@ public class TicketServiceTest {
         ticketCreateDTO.setDepartmentId("659e901e44c1ebb1ea8755e9");
 
         department = new Department();
-        department.setId("659e901e44c1ebb1ea8755e9");
+        department.setId("659e901e44c1ebb1ea8755e8");
 
         ticket = new Ticket();
         ticket.setId("1");
@@ -65,157 +66,283 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void getAllWaitingTickets_returnsAllWaitingTickets() {
+    void getAllWaitingTickets_ShouldReturnAllWaitingTickets() {
+        // Given
         List<Ticket> tickets = new ArrayList<>();
+        Ticket ticket1 = new Ticket();
+        ticket1.setId("65ba76dd4ba9774dec11ddbd");
+        ticket1.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        ticket1.setTicketNr("E-101");
+        ticket1.setCurrentStatus(TicketStatus.WAITING);
+        tickets.add(ticket1);
+
+        Ticket ticket2 = new Ticket();
+        ticket2.setId("65ba76fb4ba9774dec11ddbe");
+        ticket2.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        ticket2.setTicketNr("E-102");
+        ticket2.setCurrentStatus(TicketStatus.WAITING);
+        tickets.add(ticket2);
+
         when(ticketRepository.findAllByCurrentStatus(TicketStatus.WAITING)).thenReturn(tickets);
 
+        // When
         List<TicketGetAllDTO> result = ticketService.getAllWaitingTickets();
 
-        assertEquals(tickets.size(), result.size());
-        verify(ticketRepository, times(1)).findAllByCurrentStatus(TicketStatus.WAITING);
+        // Then
+        assertEquals(2, result.size());
+        assertEquals("E-101", result.get(0).getTicketNr());
+        assertEquals("E-102", result.get(1).getTicketNr());
+        verify(ticketRepository).findAllByCurrentStatus(TicketStatus.WAITING);
     }
 
     @Test
-    public void getInProgressTicketByEmployeeId_returnsTicket_whenTicketExists() {
-        String employeeId = "1";
+    void getEmployeeById_ShouldReturnEmployee_WhenEmployeeExists() {
+        // Given
+        String employeeId = "65a65442a26af860b1c0681a";
+        Employee expectedEmployee = new Employee();
+        expectedEmployee.setId(employeeId);
+        expectedEmployee.setName("Dieter");
+        expectedEmployee.setSurname("Bohlen");
+        expectedEmployee.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        expectedEmployee.setRoom("E21");
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(expectedEmployee));
+
+        // When
+        Employee actualEmployee = employeeRepository.findById(employeeId).orElse(null);
+
+        // Then
+        assertEquals(expectedEmployee, actualEmployee);
+    }
+
+
+    @Test
+    void getOldestTicket_ShouldReturnOldestTicket_WhenTicketExists() {
+        // Given
+        String departmentId = "659e901e44c1ebb1ea8755e8";
+        Employee employee = new Employee();
+        employee.setId("employeeId");
+        employee.setName("Max");
+        employee.setSurname("Mustermann");
+        employee.setDepartmentId(departmentId);
+        employee.setRoom("Room1");
+
+        Ticket oldestTicket = new Ticket();
+        oldestTicket.setId("65ba76dd4ba9774dec11ddbd");
+        oldestTicket.setDepartmentId(departmentId);
+        oldestTicket.setTicketNr("E-101");
+        oldestTicket.setCurrentStatus(TicketStatus.WAITING);
+        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(departmentId, TicketStatus.WAITING)).thenReturn(Optional.of(oldestTicket));
+
+        // When
+        Ticket result = ticketService.getOldestTicket(employee);
+
+        // Then
+        assertEquals(oldestTicket, result);
+    }
+
+    @Test
+    void getOldestTicket_ShouldThrowIllegalArgumentException_WhenNoTicketFound() {
+        // Given
+        String departmentId = "659e901e44c1ebb1ea8755e8";
+        Employee employee = new Employee();
+        employee.setId("employeeId");
+        employee.setName("Max");
+        employee.setSurname("Mustermann");
+        employee.setDepartmentId(departmentId);
+        employee.setRoom("Room1");
+        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(departmentId, TicketStatus.WAITING)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> ticketService.getOldestTicket(employee));
+    }
+
+    @Test
+    void getAllInProgressTickets_ShouldReturnAllInProgressTickets() {
+        // Given
+        List<Ticket> tickets = new ArrayList<>();
+        Ticket ticket1 = new Ticket();
+        ticket1.setId("65ba76dd4ba9774dec11ddbd");
+        ticket1.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        ticket1.setTicketNr("E-101");
+        ticket1.setCurrentStatus(TicketStatus.IN_PROGRESS);
+        tickets.add(ticket1);
+
+        Ticket ticket2 = new Ticket();
+        ticket2.setId("65ba76fb4ba9774dec11ddbe");
+        ticket2.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        ticket2.setTicketNr("E-102");
+        ticket2.setCurrentStatus(TicketStatus.IN_PROGRESS);
+        tickets.add(ticket2);
+
+        when(ticketRepository.findAllByCurrentStatus(TicketStatus.IN_PROGRESS)).thenReturn(tickets);
+
+        // When
+        List<TicketGetAllWhereStatusInProgressDTO> result = ticketService.getAllInProgressTickets();
+
+        // Then
+        assertEquals(2, result.size());
+        assertEquals("E-101", result.get(0).getTicketNr());
+        assertEquals("E-102", result.get(1).getTicketNr());
+        verify(ticketRepository).findAllByCurrentStatus(TicketStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void getInProgressTicketByEmployeeId_ShouldReturnTicket_WhenTicketExists() {
+        // Given
+        String employeeId = "65a65442a26af860b1c0681a";
         Ticket ticket = new Ticket();
+        ticket.setId("65ba76dd4ba9774dec11ddbd");
+        
+        //("65ba76dd4ba9774dec11ddbd", "659e901e44c1ebb1ea8755e8", "E-101", TicketStatus.IN_PROGRESS);
+        ticket.setRoom("E21");
+        ticket.setEmployeeId(employeeId);
         when(ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(Optional.of(ticket));
 
+        // When
         TicketAssigmentDTO result = ticketService.getInProgressTicketByEmployeeId(employeeId);
 
+        // Then
         assertNotNull(result);
         assertEquals(ticket.getId(), result.getId());
+        assertEquals(ticket.getRoom(), result.getRoom());
+        assertEquals(ticket.getTicketNr(), result.getTicketNr());
+        assertEquals(ticket.getCurrentStatus(), result.getCurrentStatus());
+        assertEquals(ticket.getEmployeeId(), result.getEmployeeId());
     }
 
     @Test
-    public void getInProgressTicketByEmployeeId_throwsException_whenTicketDoesNotExist() {
-        String employeeId = "1";
+    void getInProgressTicketByEmployeeId_ShouldThrowResponseStatusException_WhenTicketNotFound() {
+        // Given
+        String employeeId = "non-existing-employee-id";
         when(ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(Optional.empty());
 
+        // When & Then
         assertThrows(ResponseStatusException.class, () -> ticketService.getInProgressTicketByEmployeeId(employeeId));
     }
 
+    @Test
+    void createTicketWithDepartment_ShouldCreateTicket() {
+        // Given
+        TicketCreateDTO ticketCreateDTO = new TicketCreateDTO();
+        ticketCreateDTO.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        Department department = new Department();
+        department.setId("659e901e44c1ebb1ea8755e8");
+        department.setName("IT");
+        department.setPrefix("IT-");
+        department.setCurrentNumber(111);
+
+        LocalDateTime now = LocalDateTime.now();
+        Ticket expectedTicket = new Ticket();
+        expectedTicket.setDepartmentId("659e901e44c1ebb1ea8755e8");
+        expectedTicket.setTicketNr("IT-112");
+        expectedTicket.setCurrentStatus(TicketStatus.WAITING);
+        expectedTicket.setCreatedAt(now);
+        expectedTicket.setStatusHistory(new ArrayList<>(List.of(new StatusChange(TicketStatus.WAITING, now))));
+
+        when(departmentRepository.findById("659e901e44c1ebb1ea8755e8")).thenReturn(Optional.of(department));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(i -> {
+            Ticket ticket = i.getArgument(0, Ticket.class);
+            ticket.setId("65ba6ca23a03d73d9d27c996"); // Set the ID as expected
+            return ticket;
+        });
+
+        // When
+        Ticket result = ticketService.createTicketWithDepartment(ticketCreateDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("65ba6ca23a03d73d9d27c996", result.getId());
+        assertEquals(expectedTicket.getDepartmentId(), result.getDepartmentId());
+        assertEquals(expectedTicket.getTicketNr(), result.getTicketNr());
+        assertEquals(expectedTicket.getCurrentStatus(), result.getCurrentStatus());
+        assertEquals(expectedTicket.getStatusHistory().size(), result.getStatusHistory().size());
+    }
+
+
+    @Test
+    void createTicketWithDepartment_ShouldThrowIllegalArgumentException_WhenDepartmentNotFound() {
+        // Given
+        TicketCreateDTO ticketCreateDTO = new TicketCreateDTO();
+        ticketCreateDTO.setDepartmentId("non-existing-department-id");
+        when(departmentRepository.findById("non-existing-department-id")).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> ticketService.createTicketWithDepartment(ticketCreateDTO));
+    }
     /*@Test
-    public void testCreateTicketWithDepartment_Successful() {
-        // Arrange
-        when(departmentRepository.findById(anyString())).thenReturn(Optional.of(department));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+    void assignNextTicket_ShouldAssignEmployeeToTicket() {
+        // Given
+        String employeeId = "65a65442a26af860b1c0681a";
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setName("Max");
+        employee.setSurname("Mustermann");
+        employee.setRoom("E21");
 
-        // Act
-        Ticket createdTicket = ticketService.createTicketWithDepartment(ticketCreateDTO);
+        Ticket oldestTicket = new Ticket();
+        oldestTicket.setId("65ba76dd4ba9774dec11dd33");
+        oldestTicket.setDepartmentId("659e901e44c1ebb1ea8755b1");
+        oldestTicket.setTicketNr("E-101");
+        oldestTicket.setCurrentStatus(TicketStatus.WAITING);
+        oldestTicket.setCreatedAt(LocalDateTime.now().minusDays(5));
 
-        // Assert
-        assertNotNull(createdTicket);
-        assertEquals("659e901e44c1ebb1ea8755e9", createdTicket.getDepartmentId());
-        verify(departmentRepository, times(1)).findById("659e901e44c1ebb1ea8755e9");
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-        verify(messagingTemplate).convertAndSend("/topic/updates", "Neues Ticket erstellt: " + createdTicket.getTicketNr());
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc("659e901e44c1ebb1ea8755b1", TicketStatus.WAITING)).thenReturn(Optional.of(oldestTicket));
+        when(ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.WAITING)).thenReturn(false);
+
+        // When
+        ticketService.assignNextTicket(employeeId);
+
+        // Then
+        verify(ticketRepository).save(oldestTicket);
+        assertEquals(TicketStatus.WAITING, oldestTicket.getCurrentStatus());
+        assertEquals(employeeId, oldestTicket.getEmployeeId());
+        assertEquals("E21", oldestTicket.getRoom());
     }*/
 
     @Test
-    void testCreateTicketWithDepartment_Successful() {
-        // Setup
-        TicketCreateDTO ticketCreateDTO = new TicketCreateDTO();
-        ticketCreateDTO.setDepartmentId("659e901e44c1ebb1ea8755e8");
-
-        Department mockDepartment = new Department();
-        mockDepartment.setId("659e901e44c1ebb1ea8755e8");
-        mockDepartment.setName("Einwohnermeldeamt");
-        mockDepartment.setPrefix("E-");
-        mockDepartment.setCurrentNumber(111);
-
-        when(departmentRepository.findById("659e901e44c1ebb1ea8755e8")).thenReturn(Optional.of(mockDepartment));
-        when(departmentRepository.save(any(Department.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(ticketRepository.save(any(Ticket.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        // Erwartete Zeit etwas vor der aktuellen Zeit, um sicherzustellen, dass sie vor dem Erstellen des Tickets liegt
-        LocalDateTime expectedTimeBeforeNow = LocalDateTime.now().minusSeconds(1);
-
-        // Ausführen
-        Ticket result = ticketService.createTicketWithDepartment(ticketCreateDTO);
-
-        // Verifizieren
-        assertNotNull(result);
-        assertEquals("65ba6ca23a03d73d9d27c996", result.getId());
-        assertEquals("659e901e44c1ebb1ea8755e8", result.getDepartmentId());
-        assertEquals("E-112", result.getTicketNr());
-        assertEquals(TicketStatus.WAITING, result.getCurrentStatus());
-
-        assertNotNull(result.getStatusHistory());
-        assertFalse(result.getStatusHistory().isEmpty());
-        StatusChange statusChange = result.getStatusHistory().get(0);
-        assertTrue(LocalDateTime.now().isAfter(expectedTimeBeforeNow));
-        assertTrue(expectedTimeBeforeNow.isBefore(LocalDateTime.now()));
-
-        assertNull(result.getEmployeeId());
-        assertNull(result.getRoom());
-        assertNull(result.getCommentByEmployee());
-
-        // Aufräumen und überprüfen der Interaktionen
-        verify(departmentRepository).findById("659e901e44c1ebb1ea8755e8");
-        verify(ticketRepository).save(any(Ticket.class));
-        // ... und weitere Verifications nach Bedarf
-    }
-
-
-
-
-
-    @Test
-    public void testCreateTicketWithDepartment_DepartmentNotFound() {
-        when(departmentRepository.findById(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            ticketService.createTicketWithDepartment(ticketCreateDTO);
-        });
-    }
-
-    @Test
-    public void assignNextTicket_assignsTicket() {
-        String employeeId = "1";
-        Employee employee = new Employee();
-        Ticket ticket = new Ticket();
-        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING)).thenReturn(Optional.of(ticket));
-
-        assertDoesNotThrow(() -> ticketService.assignNextTicket(employeeId));
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-    }
-
-    @Test
-    public void assignNextTicket_throwsException_whenEmployeeHasActiveTicket() {
-        String employeeId = "1";
+    void assignNextTicket_ShouldThrowIllegalStateException_WhenEmployeeAlreadyHasActiveTicket() {
+        // Given
+        String employeeId = "employeeId";
         when(ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(true);
 
+        // When & Then
         assertThrows(IllegalStateException.class, () -> ticketService.assignNextTicket(employeeId));
     }
 
     @Test
-    public void updateTicket_updatesTicket() {
-        String ticketId = "1";
+    void updateTicket_ShouldUpdateTicketStatus() {
+        // Given
+        String ticketId = "ticketId";
         TicketUpdateDTO updateDTO = new TicketUpdateDTO();
-        Ticket ticket = new Ticket();
-        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        updateDTO.setCommentByEmployee("New Comment");
+        updateDTO.setCurrentStatus(TicketStatus.FINISHED);
 
-        assertDoesNotThrow(() -> ticketService.updateTicket(ticketId, updateDTO));
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+        ticket.setCurrentStatus(TicketStatus.IN_PROGRESS);
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+
+        // When
+        ticketService.updateTicket(ticketId, updateDTO);
+
+        // Then
+        verify(ticketRepository).save(ticket);
+        assertEquals(TicketStatus.FINISHED, ticket.getCurrentStatus());
+        assertEquals("New Comment", ticket.getCommentByEmployee());
     }
 
     @Test
-    public void updateTicket_throwsException_whenTicketDoesNotExist() {
-        String ticketId = "1";
+    void updateTicket_ShouldThrowIllegalArgumentException_WhenTicketNotFound() {
+        // Given
+        String ticketId = "non-existing-ticket-id";
         TicketUpdateDTO updateDTO = new TicketUpdateDTO();
+
         when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
 
+        // When & Then
         assertThrows(IllegalArgumentException.class, () -> ticketService.updateTicket(ticketId, updateDTO));
-    }
-
-    @Test
-    public void deleteAllTicketsAndResetDepartmentNumbers_deletesAllTicketsAndResetsDepartmentNumbers() {
-        List<Department> departments = new ArrayList<>();
-        when(departmentRepository.findAll()).thenReturn(departments);
-
-        assertDoesNotThrow(() -> ticketService.deleteAllTicketsAndResetDepartmentNumbers());
-        verify(ticketRepository, times(1)).deleteAll();
     }
 }

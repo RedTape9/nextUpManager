@@ -141,7 +141,7 @@ public class TicketService {
                 .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
     }
 
-    private Ticket getOldestTicket(Employee employee) {
+    public Ticket getOldestTicket(Employee employee) {
         Optional<Ticket> oldestTicket = ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING);
         System.out.println("getOldestTicket Ausgabe: " + oldestTicket);
         return oldestTicket.orElseThrow(() -> new IllegalArgumentException("Kein Ticket im Wartestatus gefunden"));
