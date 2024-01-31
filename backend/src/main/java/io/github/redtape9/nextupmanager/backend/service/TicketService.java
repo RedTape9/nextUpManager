@@ -35,6 +35,7 @@ public class TicketService {
                     dto.setDepartmentId(ticket.getDepartmentId());
                     dto.setTicketNr(ticket.getTicketNr());
                     dto.setCurrentStatus(ticket.getCurrentStatus());
+                    System.out.println("GetAllWaitingTickets Ausgabe: " + dto);
                     return dto;
                 })
                 .toList();
@@ -47,6 +48,7 @@ public class TicketService {
                     TicketGetAllWhereStatusInProgressDTO dto = new TicketGetAllWhereStatusInProgressDTO();
                     dto.setTicketNr(ticket.getTicketNr());
                     dto.setRoom(ticket.getRoom());
+                    System.out.println("GetAllInProgressTickets Ausgabe: " + dto);
                     return dto;
                 })
                 .toList();
@@ -62,6 +64,7 @@ public class TicketService {
             dto.setRoom(ticket.getRoom());
             dto.setCurrentStatus(ticket.getCurrentStatus());
             dto.setTicketNr(ticket.getTicketNr());
+            System.out.println("GetInProgressTicketByEmployeeId Ausgabe: " + dto);
 
             return dto;
         } else {
@@ -70,14 +73,15 @@ public class TicketService {
     }
 
     public Ticket createTicketWithDepartment(TicketCreateDTO ticketCreateDTO) {
-
         Ticket preparedTicket = prepareTicket(ticketCreateDTO);
         Ticket createdTicket = saveTicket(preparedTicket);
         sendNotification(createdTicket);
+        System.out.println("createdTicket = " + createdTicket);
         return createdTicket;
     }
 
     private Department getDepartmentById(String departmentId) {
+        System.out.println("departmentId = " + departmentRepository.findById(departmentId));
         return departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Department mit ID: " + departmentId + " existiert nicht"));
     }
@@ -90,12 +94,12 @@ public class TicketService {
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setCurrentStatus(TicketStatus.WAITING);
         department.setCurrentNumber(department.getCurrentNumber() + 1);
-        ticket.setTicketNr(department.getPrefix() + department.getCurrentNumber());
-
         departmentService.updateDepartment(department);
-
+        ticket.setTicketNr(department.getPrefix() + department.getCurrentNumber());
         ticket.setStatusHistory(new ArrayList<>());
         ticket.getStatusHistory().add(new StatusChange(TicketStatus.WAITING, ticket.getCreatedAt()));
+
+        System.out.println("prepareTicket Ausgabe: " + ticket);
 
         return ticket;
 
@@ -132,12 +136,14 @@ public class TicketService {
     }
 
     private Employee getEmployeeById(String employeeId) {
+        System.out.println("getEmployeeById Ausgabe: " + employeeRepository.findById(employeeId));
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("Mitarbeiter mit der ID: " + employeeId + " nicht gefunden"));
     }
 
     private Ticket getOldestTicket(Employee employee) {
         Optional<Ticket> oldestTicket = ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING);
+        System.out.println("getOldestTicket Ausgabe: " + oldestTicket);
         return oldestTicket.orElseThrow(() -> new IllegalArgumentException("Kein Ticket im Wartestatus gefunden"));
     }
 
@@ -157,6 +163,7 @@ public class TicketService {
             ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
             ticket.setCurrentStatus(updateDTO.getCurrentStatus());
             ticket.getStatusHistory().add(new StatusChange(updateDTO.getCurrentStatus(), LocalDateTime.now()));
+            System.out.println("updateTicket Ausgabe: " + ticket);
             ticketRepository.save(ticket);
             return;
         }
