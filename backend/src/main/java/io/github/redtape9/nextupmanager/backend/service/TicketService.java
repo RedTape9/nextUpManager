@@ -181,7 +181,7 @@ public class TicketService {
     public TicketUpdateDTO updateTicketStatus(String ticketId, String employeeId, TicketUpdateDTO updateDTO) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + ticketId + " nicht gefunden"));
-        if (!ticket.getEmployeeId().equals(employeeId) || ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
+        if (!ticket.getEmployeeId().equals(employeeId) && ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
             throw new IllegalStateException("Ticket kann nicht aktualisiert werden, da der Mitarbeiter oder der Status nicht valide ist");
         }
         TicketStatus newStatus = getTicketStatus(updateDTO);
@@ -191,7 +191,7 @@ public class TicketService {
     }
 
     private void updateTicket(Ticket ticket, TicketUpdateDTO updateDTO, TicketStatus status) {
-        ticket.setCurrentStatus(status);
+        ticket.setCurrentStatus(updateDTO.getCurrentStatus());
         ticket.setCommentByEmployee(updateDTO.getCommentByEmployee());
         addStatusChange(ticket, status);
     }
