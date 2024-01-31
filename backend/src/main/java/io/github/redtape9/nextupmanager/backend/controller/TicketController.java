@@ -33,8 +33,6 @@ public class TicketController {
     }
 
 
-
-    // in TicketController.java
     @GetMapping("/in-progress/{employeeId}")
     public TicketAssigmentDTO getInProgressTicketByEmployeeId(@PathVariable String employeeId) {
         return ticketService.getInProgressTicketByEmployeeId(employeeId);

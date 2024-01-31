@@ -2,6 +2,7 @@ import axios from 'axios';
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
 import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
+import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
@@ -102,11 +103,8 @@ export const getEmployeeById = async (id: string) => {
     }
 };*/
 
-export const createTicketWithDepartment = async (departmentId: string) => {
+export const createTicketWithDepartment = async (ticketCreateDTO: TicketCreateDTO) => {
     try {
-        const ticketCreateDTO = {
-            departmentId: departmentId
-        };
         const response = await axios.post(`${API_BASE_URL}/department`, ticketCreateDTO);
         console.log('Created ticket:', response.data);
         return response.data;

@@ -15,6 +15,7 @@ import EmployeeBasicInfo from "../interfaces/EmployeeBasicInfo.ts";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Ticket from "../interfaces/Ticket.ts";
 import {Client} from "@stomp/stompjs";
+import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
 
 const MainMenu = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -94,19 +95,25 @@ const MainMenu = () => {
 
     const handleBook = async () => {
         if (selectedDepartment) {
-            const createdTicket = await createTicketWithDepartment(selectedDepartment);
+            const ticketCreateDTO: TicketCreateDTO = {
+                departmentId: selectedDepartment
+            };
+            const createdTicket = await createTicketWithDepartment(ticketCreateDTO);
             setCreatedTicket(createdTicket);
         }
     };
 
-    const handlePrevious = () => {
-        setCurrentIndex(oldIndex => Math.max(oldIndex - 7, 0));
-    };
-
     const handleNext = () => {
-        setCurrentIndex(oldIndex => Math.min(oldIndex + 7, tickets.length - 1));
+        setCurrentIndex(oldIndex => {
+            return (oldIndex + 7 >= tickets.length) ? tickets.length - 7 : oldIndex + 7;
+        });
     };
 
+    const handlePrevious = () => {
+        setCurrentIndex(oldIndex => {
+            return (oldIndex - 7 < 0) ? 0 : oldIndex - 7;
+        });
+    };
     return (
         <>
             <NavBar />

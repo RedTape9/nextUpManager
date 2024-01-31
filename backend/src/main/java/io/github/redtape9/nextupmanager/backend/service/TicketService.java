@@ -77,15 +77,6 @@ public class TicketService {
         return createdTicket;
     }
 
-    /*private Department getDepartmentByName(String departmentName) {
-        Department department = departmentRepository.findByName(departmentName);
-        if (department == null) {
-            throw new IllegalArgumentException("Department mit Namen: " + departmentName + " existiert nicht");
-        }
-        return department;
-    }
-*/
-
     private Department getDepartmentById(String departmentId) {
         return departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Department mit ID: " + departmentId + " existiert nicht"));
@@ -115,10 +106,6 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
-   /* private void updateDepartment(Department department) {
-        department.setCurrentNumber(department.getCurrentNumber() + 1);
-        departmentService.updateDepartment(department);
-    }*/
 
     private void sendNotification(Ticket ticket) {
         if (messagingTemplate != null) {
@@ -161,24 +148,6 @@ public class TicketService {
         ticket.getStatusHistory().add(new StatusChange(TicketStatus.IN_PROGRESS, LocalDateTime.now()));
     }
 
-    /*private TicketAssigmentDTO createTicketAssignmentDTO(Ticket ticket) {
-        TicketAssigmentDTO dto = new TicketAssigmentDTO();
-        dto.setEmployeeId(ticket.getEmployeeId());
-        dto.setRoom(ticket.getRoom());
-        dto.setCurrentStatus(ticket.getCurrentStatus());
-        dto.setTicketNr(ticket.getTicketNr());
-        dto.setStatusHistory(ticket.getStatusHistory().stream()
-        return dto;
-    }*/
-
-/*    public void updateTicketStatus(String ticketId, String employeeId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket mit der ID: " + ticketId + " nicht gefunden"));
-        if (!ticket.getEmployeeId().equals(employeeId) && ticket.getCurrentStatus() != TicketStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Ticket kann nicht aktualisiert werden, da der Mitarbeiter oder der Status nicht valide ist");
-        }
-
-    }*/
 
     public void updateTicket(String ticketId, TicketUpdateDTO updateDTO) {
         Ticket ticket = ticketRepository.findById(ticketId)
@@ -192,34 +161,7 @@ public class TicketService {
             return;
         }
         throw new IllegalArgumentException("Ticket kann nicht aktualisiert werden, da der Status nicht valide ist");
-
-
     }
-
-
-
-    /*private TicketStatus getTicketStatus(TicketUpdateDTO updateDTO) {
-        try {
-            return updateDTO.getCurrentStatus();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Ungültiger Status: " + updateDTO.getCurrentStatus());
-        }
-    }
-
-    private TicketUpdateDTO createTicketUpdateDTO(Ticket ticket) {
-        TicketUpdateDTO ticketUpdateDTO = new TicketUpdateDTO();
-        ticketUpdateDTO.setCurrentStatus(ticket.getCurrentStatus());
-        ticketUpdateDTO.setCommentByEmployee(ticket.getCommentByEmployee());
-        ticketUpdateDTO.setStatusHistory(ticket.getStatusHistory().stream()
-                .map(sc -> {
-                    StatusChangeDTO statusChangeDTO = new StatusChangeDTO();
-                    statusChangeDTO.setStatus(sc.getStatus());
-                    statusChangeDTO.setTimestamp(sc.getTimestamp());
-                    return statusChangeDTO;
-                })
-                .toList());
-        return ticketUpdateDTO;
-    }*/
 
     public void deleteAllTicketsAndResetDepartmentNumbers() {
         ticketRepository.deleteAll();
