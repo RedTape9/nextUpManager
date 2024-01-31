@@ -10,16 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends MongoRepository<Ticket, String> {
-    List<Ticket> findByDepartmentId(String departmentId);
 
     List<Ticket> findAllByCurrentStatus(TicketStatus status);
 
     Optional<Ticket> findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(String departmentId, TicketStatus currentStatus);
 
     boolean existsByEmployeeIdAndCurrentStatus(String employeeId, TicketStatus status);
-
-    List<Ticket> findAllByDepartmentId(String departmentId);
-
 
     Optional<Ticket> findByEmployeeIdAndCurrentStatus(String employeeId, TicketStatus currentStatus);
 
