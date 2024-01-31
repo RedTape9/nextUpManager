@@ -92,9 +92,22 @@ export const getEmployeeById = async (id: string) => {
 }
 
 
-export const createTicketWithDepartment = async (departmentName: string) => {
+/*export const createTicketWithDepartment = async (departmentName: string) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
+        console.log('Created ticket:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating ticket', error);
+    }
+};*/
+
+export const createTicketWithDepartment = async (departmentId: string) => {
+    try {
+        const ticketCreateDTO = {
+            departmentId: departmentId
+        };
+        const response = await axios.post(`${API_BASE_URL}/department`, ticketCreateDTO);
         console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {
@@ -107,9 +120,14 @@ export const assignNextTicketToEmployee = async (employeeId: string): Promise<Ti
     return response.data;
 };
 
-
+/*
 export const updateTicketStatus = async (ticketId: string, employeeId: string, updateDTO: TicketUpdateDTO) => {
     const response = await axios.put(`${API_BASE_URL}/${ticketId}/status/${employeeId}`, updateDTO);
+    return response.data;
+};*/
+
+export const updateTicketStatus = async (ticketId: string, updateDTO: TicketUpdateDTO) => {
+    const response = await axios.put(`${API_BASE_URL}/${ticketId}`, updateDTO);
     return response.data;
 };
 

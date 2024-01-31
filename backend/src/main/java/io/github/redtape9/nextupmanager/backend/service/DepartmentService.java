@@ -16,15 +16,13 @@ public class DepartmentService {
 
 
     public Department updateDepartment(Department department) {
-        DepartmentUpdateNumberDTO updateDTO = new DepartmentUpdateNumberDTO();
-        updateDTO.setCurrentNumber(department.getCurrentNumber());
-        return applyDepartmentUpdate(department, updateDTO);
+        return departmentRepository.save(department);
     }
 
-    private Department applyDepartmentUpdate(Department existingDepartment, DepartmentUpdateNumberDTO updateDTO) {
+    /*private Department applyDepartmentUpdate(Department existingDepartment, DepartmentUpdateNumberDTO updateDTO) {
         existingDepartment.setCurrentNumber(updateDTO.getCurrentNumber());
         return departmentRepository.save(existingDepartment);
-    }
+    }*/
 
     public List<DepartmentGetForOptionDTO> getAllDepartments() {
         return departmentRepository.findAll().stream()

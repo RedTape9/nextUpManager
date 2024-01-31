@@ -68,7 +68,7 @@ const MainMenu = () => {
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
-            setSelectedDepartment(departmentsData[0].name);
+            setSelectedDepartment(departmentsData[0].id);
         }
     };
 
@@ -93,8 +93,10 @@ const MainMenu = () => {
     };
 
     const handleBook = async () => {
-        const createdTicket = await createTicketWithDepartment(selectedDepartment);
-        setCreatedTicket(createdTicket);
+        if (selectedDepartment) {
+            const createdTicket = await createTicketWithDepartment(selectedDepartment);
+            setCreatedTicket(createdTicket);
+        }
     };
 
     const handlePrevious = () => {
@@ -120,7 +122,7 @@ const MainMenu = () => {
                                 <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedDepartment}
                                              onChange={(e) => setSelectedDepartment(e.target.value)}>
                                     {departments.map((department) => (
-                                        <option key={department.id} value={department.name}>
+                                        <option key={department.id} value={department.id}>
                                             {department.name}
                                         </option>
                                     ))}
@@ -172,14 +174,14 @@ const MainMenu = () => {
                                     tickets.length === 0 ? (
                                         <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
                                     ) :(
-                                    tickets
-                                    .slice(currentIndex, currentIndex + 7)
-                                    .map((ticket, index) => (
-                                        <Card key={index}
-                                              className="w-auto text-bg-primary text-center m-2">
-                                            <p className="ticketNr fs-5">{ticket.ticketNr}</p>
-                                        </Card>
-                                    )))
+                                        tickets
+                                            .slice(currentIndex, currentIndex + 7)
+                                            .map((ticket, index) => (
+                                                <Card key={index}
+                                                      className="w-auto text-bg-primary text-center m-2">
+                                                    <p className="ticketNr fs-5">{ticket.ticketNr}</p>
+                                                </Card>
+                                            )))
                                 }
                                 <div className="d-flex justify-content-between m-2 ">
                                     <Button className="bg-primary brighter" onClick={handlePrevious}>

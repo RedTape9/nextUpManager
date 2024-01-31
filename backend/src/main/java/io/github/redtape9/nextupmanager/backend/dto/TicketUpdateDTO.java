@@ -8,6 +8,5 @@ import java.util.List;
 public class TicketUpdateDTO {
     private String commentByEmployee;
     private TicketStatus currentStatus;
-    private List<StatusChangeDTO> statusHistory;
 }
 

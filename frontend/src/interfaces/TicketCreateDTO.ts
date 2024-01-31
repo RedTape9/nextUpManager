@@ -1,0 +1,4 @@
+interface TicketCreateDTO {
+    departmentId: string;
+
+}

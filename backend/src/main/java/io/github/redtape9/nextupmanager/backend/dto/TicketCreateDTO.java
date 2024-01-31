@@ -11,9 +11,5 @@ import java.util.List;
 public class TicketCreateDTO {
 
     private String departmentId;
-    private LocalDateTime createdAt;
-    private TicketStatus currentStatus;
-    private String ticketNr;
-    private List<Ticket.StatusChange> statusHistory;
 
 }

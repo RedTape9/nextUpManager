@@ -17,9 +17,9 @@ public class TicketController {
 
 
     // CREATE
-    @PostMapping("/department/{name}")
-    public Ticket createTicket(@RequestBody TicketCreateDTO ticketCreateDTO, @PathVariable String name) {
-        return ticketService.createTicketWithDepartment(ticketCreateDTO, name);
+    @PostMapping("/department")
+    public Ticket createTicket(@RequestBody TicketCreateDTO ticketCreateDTO) {
+        return ticketService.createTicketWithDepartment(ticketCreateDTO);
     }
 
     @GetMapping("/waiting")
@@ -42,18 +42,17 @@ public class TicketController {
 
     // UPDATE for assigment
     @PutMapping("/next/{employeeId}")
-    public TicketAssigmentDTO assignNextTicketToEmployee(@PathVariable String employeeId) {
-        return ticketService.assignNextTicket(employeeId);
+    public void assignNextTicketToEmployee(@PathVariable String employeeId) {
+        ticketService.assignNextTicket(employeeId);
     }
 
 
-    @PutMapping("/{ticketId}/status/{employeeId}")
-    public TicketUpdateDTO updateTicketStatus(
+    @PutMapping("/{ticketId}")
+    public void updateTicketStatus(
             @PathVariable String ticketId,
-            @PathVariable String employeeId,
             @RequestBody TicketUpdateDTO updateDTO) {
 
-        return ticketService.updateTicketStatus(ticketId, employeeId, updateDTO);
+       ticketService.updateTicket(ticketId, updateDTO);
     }
 
     @DeleteMapping("/deleteAll")
