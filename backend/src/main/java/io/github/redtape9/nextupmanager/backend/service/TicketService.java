@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.List;
 
 @Service
@@ -40,7 +39,7 @@ public class TicketService {
                     dto.setCurrentStatus(ticket.getCurrentStatus());
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<TicketGetAllWhereStatusInProgressDTO> getAllInProgressTickets() {
@@ -52,7 +51,7 @@ public class TicketService {
                     dto.setRoom(ticket.getRoom());
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public TicketAssigmentDTO getInProgressTicketByEmployeeId(String employeeId) {
@@ -72,7 +71,7 @@ public class TicketService {
                         statusChangeDTO.setTimestamp(sc.getTimestamp());
                         return statusChangeDTO;
                     })
-                    .collect(Collectors.toList()));
+                    .toList());
             return dto;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket nicht gefunden");
@@ -124,7 +123,7 @@ public class TicketService {
         if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/updates", "Neues Ticket erstellt: " + ticket.getTicketNr());
         } else {
-            System.err.println("SimpMessagingTemplate ist null");
+            throw new IllegalStateException("SimpMessagingTemplate ist null");
         }
     }
 
@@ -175,7 +174,7 @@ public class TicketService {
                     statusChangeDTO.setTimestamp(sc.getTimestamp());
                     return statusChangeDTO;
                 })
-                .collect(Collectors.toList()));
+                .toList());
         return dto;
     }
 
@@ -216,7 +215,7 @@ public class TicketService {
                     statusChangeDTO.setTimestamp(sc.getTimestamp());
                     return statusChangeDTO;
                 })
-                .collect(Collectors.toList()));
+                .toList());
         return ticketUpdateDTO;
     }
 
