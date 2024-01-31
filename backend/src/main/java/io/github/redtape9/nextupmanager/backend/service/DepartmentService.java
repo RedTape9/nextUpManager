@@ -14,9 +14,6 @@ import java.util.List;
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
 
-    /*public Department getDepartmentByName(String name) {
-        return departmentRepository.findByName(name);
-    }*/
 
     public Department updateDepartment(Department department) {
         DepartmentUpdateNumberDTO updateDTO = new DepartmentUpdateNumberDTO();

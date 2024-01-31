@@ -15,5 +15,3 @@ public class TicketCreateDTO {
     private List<Ticket.StatusChange> statusHistory;
 
 }
-
-// TODO: dont forget to remove unnecessary fields
