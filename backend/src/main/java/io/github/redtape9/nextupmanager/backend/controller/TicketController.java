@@ -18,8 +18,8 @@ public class TicketController {
 
     // CREATE
     @PostMapping("/department/{name}")
-    public Ticket createTicket(@RequestBody Ticket ticket, @PathVariable String name) {
-        return ticketService.createTicketWithDepartment(ticket, name);
+    public Ticket createTicket(@RequestBody TicketCreateDTO ticketCreateDTO, @PathVariable String name) {
+        return ticketService.createTicketWithDepartment(ticketCreateDTO, name);
     }
 
     @GetMapping("/waiting")

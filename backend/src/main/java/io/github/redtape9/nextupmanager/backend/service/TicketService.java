@@ -78,10 +78,10 @@ public class TicketService {
         }
     }
 
-    public Ticket createTicketWithDepartment(Ticket ticket, String departmentName) {
+    public Ticket createTicketWithDepartment(TicketCreateDTO ticketCreateDTO, String departmentName) {
         Department department = getDepartmentByName(departmentName);
-        prepareTicket(ticket, department);
-        Ticket createdTicket = saveTicket(ticket);
+        Ticket preparedTicket = prepareTicket(ticketCreateDTO, department);
+        Ticket createdTicket = saveTicket(preparedTicket);
         updateDepartment(department);
         sendNotification(createdTicket);
         return createdTicket;
@@ -95,12 +95,23 @@ public class TicketService {
         return department;
     }
 
-    private void prepareTicket(Ticket ticket, Department department) {
-        ticket.setDepartmentId(department.getId());
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setCurrentStatus(TicketStatus.WAITING);
-        ticket.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
+    private Ticket prepareTicket(TicketCreateDTO ticketCreateDTO, Department department) {
+        ticketCreateDTO.setDepartmentId(department.getId());
+        ticketCreateDTO.setCreatedAt(LocalDateTime.now());
+        ticketCreateDTO.setCurrentStatus(TicketStatus.WAITING);
+        ticketCreateDTO.setTicketNr(department.getPrefix() + (department.getCurrentNumber() + 1));
+        ticketCreateDTO.setStatusHistory(List.of());
+
+        Ticket ticket = new Ticket();
+        ticket.setDepartmentId(ticketCreateDTO.getDepartmentId());
+        ticket.setCreatedAt(ticketCreateDTO.getCreatedAt());
+        ticket.setCurrentStatus(ticketCreateDTO.getCurrentStatus());
+        ticket.setTicketNr(ticketCreateDTO.getTicketNr());
         addStatusChange(ticket, TicketStatus.WAITING);
+        ticket.setStatusHistory(ticketCreateDTO.getStatusHistory());
+
+        return ticket;
+
     }
 
     private void addStatusChange(Ticket ticket, TicketStatus status) {
