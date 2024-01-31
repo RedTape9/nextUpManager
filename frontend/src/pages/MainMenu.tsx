@@ -15,6 +15,7 @@ import EmployeeBasicInfo from "../interfaces/EmployeeBasicInfo.ts";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Ticket from "../interfaces/Ticket.ts";
 import {Client} from "@stomp/stompjs";
+import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
 
 const MainMenu = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -68,7 +69,7 @@ const MainMenu = () => {
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
-            setSelectedDepartment(departmentsData[0].name);
+            setSelectedDepartment(departmentsData[0].id);
         }
     };
 
@@ -93,18 +94,26 @@ const MainMenu = () => {
     };
 
     const handleBook = async () => {
-        const createdTicket = await createTicketWithDepartment(selectedDepartment);
-        setCreatedTicket(createdTicket);
-    };
-
-    const handlePrevious = () => {
-        setCurrentIndex(oldIndex => Math.max(oldIndex - 7, 0));
+        if (selectedDepartment) {
+            const ticketCreateDTO: TicketCreateDTO = {
+                departmentId: selectedDepartment
+            };
+            const createdTicket = await createTicketWithDepartment(ticketCreateDTO);
+            setCreatedTicket(createdTicket);
+        }
     };
 
     const handleNext = () => {
-        setCurrentIndex(oldIndex => Math.min(oldIndex + 7, tickets.length - 1));
+        setCurrentIndex(oldIndex => {
+            return (oldIndex + 7 >= tickets.length) ? tickets.length - 7 : oldIndex + 7;
+        });
     };
 
+    const handlePrevious = () => {
+        setCurrentIndex(oldIndex => {
+            return (oldIndex - 7 < 0) ? 0 : oldIndex - 7;
+        });
+    };
     return (
         <>
             <NavBar />
@@ -120,7 +129,7 @@ const MainMenu = () => {
                                 <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedDepartment}
                                              onChange={(e) => setSelectedDepartment(e.target.value)}>
                                     {departments.map((department) => (
-                                        <option key={department.id} value={department.name}>
+                                        <option key={department.id} value={department.id}>
                                             {department.name}
                                         </option>
                                     ))}
@@ -172,23 +181,25 @@ const MainMenu = () => {
                                     tickets.length === 0 ? (
                                         <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
                                     ) :(
-                                    tickets
-                                    .slice(currentIndex, currentIndex + 7)
-                                    .map((ticket, index) => (
-                                        <Card key={index}
-                                              className="w-auto text-bg-primary text-center m-2">
-                                            <p className="ticketNr fs-5">{ticket.ticketNr}</p>
-                                        </Card>
-                                    )))
+                                        tickets
+                                            .slice(currentIndex, currentIndex + 7)
+                                            .map((ticket, index) => (
+                                                <Card key={index}
+                                                      className="w-auto text-bg-primary text-center m-2">
+                                                    <p className="ticketNr fs-5">{ticket.ticketNr}</p>
+                                                </Card>
+                                            )))
                                 }
-                                <div className="d-flex justify-content-between m-2 ">
-                                    <Button className="bg-primary brighter" onClick={handlePrevious}>
-                                        ◀
-                                    </Button>
-                                    <Button className="bg-primary brighter" onClick={handleNext}>
-                                        ▶
-                                    </Button>
-                                </div>
+                                {tickets.length > 7 && (
+                                    <div className="d-flex justify-content-between m-2 ">
+                                        <Button className="bg-primary brighter" onClick={handlePrevious}>
+                                            ◀
+                                        </Button>
+                                        <Button className="bg-primary brighter" onClick={handleNext}>
+                                            ▶
+                                        </Button>
+                                    </div>
+                                )}
                             </Card.Body>
                         </Card>
                     </Col>

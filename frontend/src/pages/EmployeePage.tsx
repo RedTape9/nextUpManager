@@ -81,11 +81,10 @@ const EmployeePage = () => {
     const handleCancelTicket = async () => {
         if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
-                currentStatus: 'CANCELED',
                 commentByEmployee: comment,
-                statusHistory: [...assignedTicket.statusHistory, {status: 'CANCELED'}]
+                currentStatus: 'CANCELED'
             };
-            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket.id, updateDTO);
             setComment('');
             await fetchTicket();
         }
@@ -97,11 +96,10 @@ const EmployeePage = () => {
     const handleFinishTicket = async () => {
         if (assignedTicket && assignedTicket.id && employeeId) {
             const updateDTO: TicketUpdateDTO = {
-                currentStatus: 'FINISHED',
                 commentByEmployee: comment,
-                statusHistory: [...assignedTicket.statusHistory, {status: 'FINISHED'}]
+                currentStatus: 'FINISHED'
             };
-            await updateTicketStatus(assignedTicket.id, employeeId, updateDTO);
+            await updateTicketStatus(assignedTicket.id, updateDTO);
             setComment('');
             await fetchTicket();
         }

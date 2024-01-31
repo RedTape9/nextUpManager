@@ -24,10 +24,5 @@ public class Ticket {
     private String employeeId;
     private String room;
     private String commentByEmployee;
-    @Data
-    public static class StatusChange {
-        private TicketStatus status;
-        private LocalDateTime timestamp;
-    }
 
 }

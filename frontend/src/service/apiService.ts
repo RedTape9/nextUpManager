@@ -2,6 +2,7 @@ import axios from 'axios';
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
 import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
+import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
 
 const API_BASE_URL = 'http://localhost:8080/api/tickets';
 const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
@@ -92,9 +93,19 @@ export const getEmployeeById = async (id: string) => {
 }
 
 
-export const createTicketWithDepartment = async (departmentName: string) => {
+/*export const createTicketWithDepartment = async (departmentName: string) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
+        console.log('Created ticket:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating ticket', error);
+    }
+};*/
+
+export const createTicketWithDepartment = async (ticketCreateDTO: TicketCreateDTO) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/department`, ticketCreateDTO);
         console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {
@@ -107,9 +118,14 @@ export const assignNextTicketToEmployee = async (employeeId: string): Promise<Ti
     return response.data;
 };
 
-
+/*
 export const updateTicketStatus = async (ticketId: string, employeeId: string, updateDTO: TicketUpdateDTO) => {
     const response = await axios.put(`${API_BASE_URL}/${ticketId}/status/${employeeId}`, updateDTO);
+    return response.data;
+};*/
+
+export const updateTicketStatus = async (ticketId: string, updateDTO: TicketUpdateDTO) => {
+    const response = await axios.put(`${API_BASE_URL}/${ticketId}`, updateDTO);
     return response.data;
 };
 
