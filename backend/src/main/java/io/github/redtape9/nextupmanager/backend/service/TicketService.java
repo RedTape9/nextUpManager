@@ -68,7 +68,7 @@ public class TicketService {
 
             return dto;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket nicht gefunden");
+            return null;
         }
     }
 
