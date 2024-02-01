@@ -210,13 +210,13 @@ public class TicketServiceTest {
     }
 
     @Test
-    void getInProgressTicketByEmployeeId_ShouldThrowResponseStatusException_WhenTicketNotFound() {
+    void getInProgressTicketByEmployeeId_ShouldReturnNull_WhenTicketNotFound() {
         // Given
         String employeeId = "non-existing-employee-id";
         when(ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(ResponseStatusException.class, () -> ticketService.getInProgressTicketByEmployeeId(employeeId));
+        assertNull(ticketService.getInProgressTicketByEmployeeId(employeeId));
     }
 
     @Test
