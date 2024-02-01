@@ -192,8 +192,7 @@ public class TicketServiceTest {
         String employeeId = "65a65442a26af860b1c0681a";
         Ticket ticket = new Ticket();
         ticket.setId("65ba76dd4ba9774dec11ddbd");
-        
-        //("65ba76dd4ba9774dec11ddbd", "659e901e44c1ebb1ea8755e8", "E-101", TicketStatus.IN_PROGRESS);
+
         ticket.setRoom("E21");
         ticket.setEmployeeId(employeeId);
         when(ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(Optional.of(ticket));
@@ -242,7 +241,7 @@ public class TicketServiceTest {
         when(departmentRepository.findById("659e901e44c1ebb1ea8755e8")).thenReturn(Optional.of(department));
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(i -> {
             Ticket ticket = i.getArgument(0, Ticket.class);
-            ticket.setId("65ba6ca23a03d73d9d27c996"); // Set the ID as expected
+            ticket.setId("65ba6ca23a03d73d9d27c996");
             return ticket;
         });
 
