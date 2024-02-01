@@ -1,3 +1,4 @@
+/*
 package io.github.redtape9.nextupmanager.backend.dto;
 
 import lombok.Data;
@@ -8,3 +9,4 @@ public class TicketInProgressByEmployeeIdDTO {
     private String employeeId;
     private String ticketNr;
 }
+*/
