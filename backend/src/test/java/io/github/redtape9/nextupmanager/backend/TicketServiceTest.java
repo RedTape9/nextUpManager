@@ -268,7 +268,7 @@ public class TicketServiceTest {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> ticketService.createTicketWithDepartment(ticketCreateDTO));
     }
-    /*@Test
+    @Test
     void assignNextTicket_ShouldAssignEmployeeToTicket() {
         // Given
         String employeeId = "65a65442a26af860b1c0681a";
@@ -286,8 +286,6 @@ public class TicketServiceTest {
         oldestTicket.setCurrentStatus(TicketStatus.WAITING);
         oldestTicket.setCreatedAt(LocalDateTime.now().minusDays(5));
 
-        TicketService ticketServiceSpy = spy(ticketService);
-
         ticketService.updateTicketStatus(oldestTicket, employee, TicketStatus.IN_PROGRESS);
         ticketRepository.save(oldestTicket);
 
@@ -299,12 +297,10 @@ public class TicketServiceTest {
         ticketService.assignNextTicket(employeeId);
 
         // Then
-        verify(ticketServiceSpy).updateTicketStatus(oldestTicket, employee, TicketStatus.IN_PROGRESS);
-        verify(ticketRepository).save(oldestTicket);
         assertEquals(TicketStatus.IN_PROGRESS, oldestTicket.getCurrentStatus());
         assertEquals(employeeId, oldestTicket.getEmployeeId());
         assertEquals(employee.getRoom(), oldestTicket.getRoom());
-    }*/
+    }
 
 
     @Test
