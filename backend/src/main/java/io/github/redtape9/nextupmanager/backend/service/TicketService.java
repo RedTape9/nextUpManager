@@ -124,8 +124,9 @@ public class TicketService {
         Employee employee = getEmployeeById(employeeId);
         Ticket oldestTicket = getOldestTicket(employee);
         updateTicketStatus(oldestTicket, employee, TicketStatus.IN_PROGRESS);
-        Ticket updatedTicket = saveTicket(oldestTicket);
-        sendNotification(updatedTicket);
+        saveTicket(oldestTicket);
+        System.out.println("UPDATEDTICKET: " + oldestTicket);
+        sendNotification(oldestTicket);
     }
 
     private void checkActiveTicket(String employeeId) {
@@ -147,7 +148,7 @@ public class TicketService {
         return oldestTicket.orElseThrow(() -> new IllegalArgumentException("Kein Ticket im Wartestatus gefunden"));
     }
 
-    private void updateTicketStatus(Ticket ticket, Employee employee, TicketStatus status) {
+    public void updateTicketStatus(Ticket ticket, Employee employee, TicketStatus status) {
         ticket.setCurrentStatus(status);
         ticket.setRoom(employee.getRoom());
         ticket.setEmployeeId(employee.getId());
