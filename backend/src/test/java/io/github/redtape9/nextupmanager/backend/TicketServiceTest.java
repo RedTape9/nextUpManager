@@ -192,8 +192,7 @@ public class TicketServiceTest {
         String employeeId = "65a65442a26af860b1c0681a";
         Ticket ticket = new Ticket();
         ticket.setId("65ba76dd4ba9774dec11ddbd");
-        
-        //("65ba76dd4ba9774dec11ddbd", "659e901e44c1ebb1ea8755e8", "E-101", TicketStatus.IN_PROGRESS);
+
         ticket.setRoom("E21");
         ticket.setEmployeeId(employeeId);
         when(ticketRepository.findByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(Optional.of(ticket));
@@ -242,7 +241,7 @@ public class TicketServiceTest {
         when(departmentRepository.findById("659e901e44c1ebb1ea8755e8")).thenReturn(Optional.of(department));
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(i -> {
             Ticket ticket = i.getArgument(0, Ticket.class);
-            ticket.setId("65ba6ca23a03d73d9d27c996"); // Set the ID as expected
+            ticket.setId("65ba6ca23a03d73d9d27c996");
             return ticket;
         });
 
@@ -269,7 +268,7 @@ public class TicketServiceTest {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> ticketService.createTicketWithDepartment(ticketCreateDTO));
     }
-    /*@Test
+    @Test
     void assignNextTicket_ShouldAssignEmployeeToTicket() {
         // Given
         String employeeId = "65a65442a26af860b1c0681a";
@@ -277,28 +276,32 @@ public class TicketServiceTest {
         employee.setId(employeeId);
         employee.setName("Max");
         employee.setSurname("Mustermann");
-        employee.setRoom("E21");
+        employee.setRoom("X21");
+        employee.setDepartmentId("659e901e44c1ebb1ea8755b1");
 
         Ticket oldestTicket = new Ticket();
         oldestTicket.setId("65ba76dd4ba9774dec11dd33");
         oldestTicket.setDepartmentId("659e901e44c1ebb1ea8755b1");
-        oldestTicket.setTicketNr("E-101");
+        oldestTicket.setTicketNr("X-101");
         oldestTicket.setCurrentStatus(TicketStatus.WAITING);
         oldestTicket.setCreatedAt(LocalDateTime.now().minusDays(5));
 
+        ticketService.updateTicketStatus(oldestTicket, employee, TicketStatus.IN_PROGRESS);
+        ticketRepository.save(oldestTicket);
+
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc("659e901e44c1ebb1ea8755b1", TicketStatus.WAITING)).thenReturn(Optional.of(oldestTicket));
-        when(ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.WAITING)).thenReturn(false);
+        when(ticketRepository.findTopByDepartmentIdAndCurrentStatusOrderByCreatedAtAsc(employee.getDepartmentId(), TicketStatus.WAITING)).thenReturn(Optional.of(oldestTicket));
+        when(ticketRepository.existsByEmployeeIdAndCurrentStatus(employeeId, TicketStatus.IN_PROGRESS)).thenReturn(false);
 
         // When
         ticketService.assignNextTicket(employeeId);
 
         // Then
-        verify(ticketRepository).save(oldestTicket);
-        assertEquals(TicketStatus.WAITING, oldestTicket.getCurrentStatus());
+        assertEquals(TicketStatus.IN_PROGRESS, oldestTicket.getCurrentStatus());
         assertEquals(employeeId, oldestTicket.getEmployeeId());
-        assertEquals("E21", oldestTicket.getRoom());
-    }*/
+        assertEquals(employee.getRoom(), oldestTicket.getRoom());
+    }
+
 
     @Test
     void assignNextTicket_ShouldThrowIllegalStateException_WhenEmployeeAlreadyHasActiveTicket() {
@@ -344,5 +347,40 @@ public class TicketServiceTest {
 
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> ticketService.updateTicket(ticketId, updateDTO));
+    }
+
+    @Test
+    void deleteAllTicketsAndResetDepartmentNumbers_ShouldDeleteAllTicketsAndResetNumbers() {
+        // Given
+        List<Department> departments = new ArrayList<>();
+        when(departmentRepository.findAll()).thenReturn(departments);
+
+        // When
+        ticketService.deleteAllTicketsAndResetDepartmentNumbers();
+
+        // Then
+        verify(ticketRepository).deleteAll();
+        verify(departmentRepository).findAll();
+        for (Department department : departments) {
+            assertEquals(100, department.getCurrentNumber());
+        }
+    }
+
+    @Test
+    void updateTicket_ShouldThrowIllegalArgumentException_WhenTicketStatusNotValid() {
+        // Given
+        String ticketId = "65ba76dd4ba9774dec11ddbd";
+        TicketUpdateDTO updateDTO = new TicketUpdateDTO();
+        updateDTO.setCurrentStatus(TicketStatus.FINISHED); // Ein Status, der nicht erlaubt ist
+
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+        ticket.setCurrentStatus(TicketStatus.WAITING); // Ein anderer Status als im updateDTO
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+
+        // When & Then
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> ticketService.updateTicket(ticketId, updateDTO));
+        assertEquals("Ticket kann nicht aktualisiert werden, da der Status nicht valide ist", thrown.getMessage());
     }
 }
