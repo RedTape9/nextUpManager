@@ -4,8 +4,20 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: '*/10 * * * *'        # Jede 10. Minute für regelmäßige Ausführung
+    - cron: '7,23,37,53 * * * *'  # Unregelmäßige Zeiten für zusätzliche Ausführungen
 
 jobs:
+  periodic-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl request with optional delay
+        run: |
+          if [ $((RANDOM % 2)) -eq 1 ]; then
+            sleep $((RANDOM % 180))  # Zufällige Verzögerung bis zu 180 Sekunden
+          fi
+          curl -X POST ${{ secrets.RENDER_URL }}
   build-frontend:
     runs-on: ubuntu-latest
     steps:
