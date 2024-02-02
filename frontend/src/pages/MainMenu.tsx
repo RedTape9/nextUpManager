@@ -30,7 +30,7 @@ const MainMenu = () => {
     useEffect(() => {
 
         const client = new Client({
-            brokerURL: 'ws://localhost:8080/ws',
+            brokerURL: 'wss://localhost:8080/ws',
             onConnect: () => {
                 client.subscribe('/topic/updates', message =>{
                         console.log(`Received: ${message.body}`);

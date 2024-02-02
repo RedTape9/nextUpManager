@@ -4,9 +4,9 @@ import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
 import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
 import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
 
-const API_BASE_URL = 'http://localhost:8080/api/tickets';
-const API_BASE_URL_DEPARTMENTS = 'http://localhost:8080/api/departments';
-const API_BASE_URL_EMPLOYEES = 'http://localhost:8080/api/employees';
+const API_BASE_URL = '/api/tickets';
+const API_BASE_URL_DEPARTMENTS = '/api/departments';
+const API_BASE_URL_EMPLOYEES = '/api/employees';
 
 export const getAllWaitingTickets = async () => {
     try {

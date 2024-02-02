@@ -6,7 +6,6 @@ import MainMenu from './pages/MainMenu';
 import WaitingRoomPage from './pages/WaitingRoomPage';
 import EmployeePage from "./pages/EmployeePage.tsx";
 
-
 function App() {
     return (
         <Router>

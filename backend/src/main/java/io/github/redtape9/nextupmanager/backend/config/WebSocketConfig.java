@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173");
+        registry.addEndpoint("/wss").setAllowedOrigins("https://next-up-manager.onrender.com/443");
     }
 
     @Override
