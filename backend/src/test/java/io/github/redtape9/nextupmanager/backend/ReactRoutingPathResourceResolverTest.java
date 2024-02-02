@@ -1,14 +1,16 @@
 package io.github.redtape9.nextupmanager.backend;
 
+import io.github.redtape9.nextupmanager.backend.configuration.ReactRoutingForwarding;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 class ReactRoutingPathResourceResolverTest {
 
     @Test
@@ -24,7 +26,7 @@ class ReactRoutingPathResourceResolverTest {
         when(relativeLocation.isReadable()).thenReturn(true);
 
         // WHEN
-        var actual = resolver.resolveResource(null, resourcePath, null, null);
+        var actual = resolver.getResource(resourcePath, location);
 
         // THEN
         Assertions.assertEquals(relativeLocation, actual);
@@ -42,7 +44,7 @@ class ReactRoutingPathResourceResolverTest {
         when(relativeLocation.exists()).thenReturn(false);
 
         // WHEN
-        var actual = resolver.resolveResource(null, resourcePath, null, null);
+        var actual = resolver.getResource(resourcePath, location);
 
         // THEN
         ClassPathResource expected = new ClassPathResource("static/index.html");

@@ -1,3 +1,5 @@
+package io.github.redtape9.nextupmanager.backend.configuration;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -7,6 +9,7 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import java.io.IOException;
 
+
 @Configuration
 public class ReactRoutingForwarding implements WebMvcConfigurer {
 
@@ -14,7 +17,7 @@ public class ReactRoutingForwarding implements WebMvcConfigurer {
 
     public static class ReactRoutingPathResourceResolver extends PathResourceResolver {
         @Override
-        protected Resource getResource(String resourcePath, Resource location) throws IOException {
+        public Resource getResource(String resourcePath, Resource location) throws IOException {
             var requestedResource = location.createRelative(resourcePath);
 
             // Is this a request to a real file?
