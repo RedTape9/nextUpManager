@@ -9,7 +9,7 @@ export default defineConfig({
         target: 'http://localhost:8080',
       },
       '/ws': {
-        target: 'ws://localhost:8080',
+        target: 'wss://next-up-manager.onrender.com/443',
         ws: true,
       },
     }
