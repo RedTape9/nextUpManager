@@ -30,7 +30,7 @@ const MainMenu = () => {
     useEffect(() => {
 
         const client = new Client({
-            brokerURL: 'wss://localhost:8080/ws',
+            brokerURL: 'wss://next-up-manager.onrender.com/wss',
             onConnect: () => {
                 client.subscribe('/topic/updates', message =>{
                         console.log(`Received: ${message.body}`);
