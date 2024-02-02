@@ -59,7 +59,7 @@ const WaitingRoomPage = () => {
             <NavBar />
             <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
-                    <Col md={2}>
+                    <Col md={3}>
                         <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p><p className="mb-1">Einwohnermeldeamt</p>
@@ -81,7 +81,7 @@ const WaitingRoomPage = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={2}>
+                    <Col md={3}>
                         <Card className="border-info mb-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p><p className="mb-1">Standesamt</p>
@@ -102,7 +102,7 @@ const WaitingRoomPage = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={2}>
+                    <Col md={3}>
                         <Card className="border-info mb-3">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Wartenbereich</p> <p className="mb-1">KFZ-Zulassungsstelle</p>
@@ -122,9 +122,9 @@ const WaitingRoomPage = () => {
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col md={6} className="d-flex align-items-center justify-content-center">
-                        <Card className=" border-info mb-2 w-75 h-100 d-flex align-items-center justify-content-center">
-                            <Card.Header className="w-100 bg-primary brighter text-center text-light">
+                    <Col md={3} className="d-flex align-items-center justify-content-center">
+                        <Card className=" border-info mb-2">
+                            <Card.Header className="bg-primary brighter text-center text-light">
                                 <p className="fs-2">Sie wurden aufgerufen</p>
                             </Card.Header>
                             <Card.Body className="d-flex align-items-center justify-content-center flex-wrap">
@@ -134,7 +134,7 @@ const WaitingRoomPage = () => {
                                     inProgressTickets.map((ticket, index) => (
                                         <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
                                               style={{width: '350px', height: '100px'}}>
-                                            <p className="ticketNr fs-2">{ticket.ticketNr} Raum: {ticket.room}</p>
+                                            <p className="ticketNr fs-4 text-center"><p>{ticket.ticketNr}</p>Raum: {ticket.room}</p>
                                         </Card>
                                     ))
                                 )}

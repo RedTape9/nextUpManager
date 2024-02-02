@@ -170,13 +170,16 @@ const EmployeePage = () => {
                                 <p className="mb=3">
                                     Diese Aktion kann nicht rückgängig gemacht werden!
                                 </p>
-                                <Button variant="danger" className="mx-3" onClick={handleConfirmDelete}>Ja, lösche alles!</Button>
-                                <Button variant="primary " onClick={() => setShowAlert(false)}>Nein, besser nicht</Button>
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <Button variant="danger" className="mx-3" onClick={handleConfirmDelete}>Ja, lösche
+                                        alles!</Button>
+                                    <Button variant="primary " onClick={() => setShowAlert(false)}>Nein</Button>
+                                </div>
                             </Alert>
-                        )}
+                            )}
 
-                        <Card >
-                            <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
+                        <Card>
+                        <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
                                 Danger Zone
                             </Card.Header>
                             <Card.Body className="d-flex justify-content-center">
