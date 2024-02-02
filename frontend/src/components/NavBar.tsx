@@ -8,7 +8,7 @@ function NavBar() {
     return (
         <Navbar expand="lg" className="bg-primary brighter-navbar ">
             <Container>
-                <Navbar.Brand href="#home" className="text-light">
+                <Navbar.Brand as={Link} to="/" className="text-light">
                     {/*<img
                         alt=""
                         src="../assets/logo.png"
