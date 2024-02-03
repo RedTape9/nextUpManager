@@ -52,6 +52,7 @@ const WaitingRoomPage = () => {
         setIsLoading(false);
     };
 
+
     if (error) {
         return <div>Error: {error}</div>;
     }
