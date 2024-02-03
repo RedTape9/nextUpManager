@@ -1,4 +1,4 @@
-import {useState, useEffect, ChangeEvent} from 'react';
+import {useState, useEffect, ChangeEvent, useRef} from 'react';
 import NavBar from "../components/NavBar.tsx";
 import Footer from "../components/Footer.tsx";
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,8 @@ const MainMenu = () => {
     const [createdTicket, setCreatedTicket] = useState<Ticket | null>(null);
     const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(false); // Hinzugefügt
+    const [isLoading, setIsLoading] = useState(false);
+    const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,28 +56,30 @@ const MainMenu = () => {
     }, []);
 
     const fetchTickets = async () => {
-        setIsLoading(true);
+        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
         try {
             const waitingData = await getAllWaitingTickets();
             setTickets(waitingData);
         } catch (error) {
             console.error('Error fetching tickets', error);
         }
+        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     };
 
     const fetchDepartments = async () => {
-        setIsLoading(true);
+        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
             setSelectedDepartment(departmentsData[0].id);
         }
+        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     };
 
     const fetchEmployees = async () => {
-        setIsLoading(true);
+        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
         try {
             const employeesData = await getAllEmployees();
             setEmployees(employeesData);
@@ -86,8 +89,10 @@ const MainMenu = () => {
         } catch (error) {
             console.error('Error fetching employees', error);
         }
+        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     };
+
 
     const handleSelectEmployee = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedEmployee(e.target.value);

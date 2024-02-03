@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import {useState, useEffect, useCallback, useRef} from 'react';
 import { useParams } from 'react-router-dom';
 import EmployeeDetailInfo from "../interfaces/EmployeeDetailInfo.ts";
 import {
@@ -24,9 +24,11 @@ const EmployeePage = () => {
     const [assignedTicket, setAssignedTicket] = useState<TicketAssignmentDTO | null>(null);
     const [comment, setComment] = useState<string>('');
     const [showAlert, setShowAlert] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Hinzugefügt
+    const [isLoading, setIsLoading] = useState(false);
+    const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const fetchEmployee = useCallback(async () => {
+        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
         if (!employeeId) {
             console.error('employee id is undefined');
             return;
@@ -38,10 +40,12 @@ const EmployeePage = () => {
             const departmentData = await getDepartmentById(employeeData.departmentId);
             setDepartment(departmentData);
         }
+        clearTimeout(loadingTimeoutRef.current);
+        setIsLoading(false);
     }, [employeeId]);
 
     const fetchTicket = useCallback(async () => {
-        setIsLoading(true);
+        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
         if (!employeeId) {
             console.error('employee id is undefined');
             return;
@@ -54,6 +58,7 @@ const EmployeePage = () => {
                 console.error(error.message);
             }
         }
+        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     }, [employeeId]);
 
