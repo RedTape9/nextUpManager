@@ -11,7 +11,7 @@ import {
 } from "../service/apiService.ts";
 import '../styles/colors.css';
 import NavBar from "../components/NavBar.tsx";
-import {Button, Card, Col, Container, Form, Row, Alert} from 'react-bootstrap';
+import {Button, Card, Col, Container, Form, Row, Alert, Spinner} from 'react-bootstrap';
 import Footer from "../components/Footer.tsx";
 import TicketAssignmentDTO from "../interfaces/TicketAssignmentDTO.ts";
 import TicketUpdateDTO from "../interfaces/TicketUpdateDTO.ts";
@@ -24,6 +24,7 @@ const EmployeePage = () => {
     const [assignedTicket, setAssignedTicket] = useState<TicketAssignmentDTO | null>(null);
     const [comment, setComment] = useState<string>('');
     const [showAlert, setShowAlert] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // Hinzugefügt
 
     const fetchEmployee = useCallback(async () => {
         if (!employeeId) {
@@ -40,6 +41,7 @@ const EmployeePage = () => {
     }, [employeeId]);
 
     const fetchTicket = useCallback(async () => {
+        setIsLoading(true);
         if (!employeeId) {
             console.error('employee id is undefined');
             return;
@@ -52,6 +54,7 @@ const EmployeePage = () => {
                 console.error(error.message);
             }
         }
+        setIsLoading(false);
     }, [employeeId]);
 
     useEffect(() => {
@@ -119,77 +122,97 @@ const EmployeePage = () => {
 
     return (
         <>
-            <NavBar />
-            <Container className="mt-4" style={{ minHeight: '520px' }}>
-                <Row>
-                    <Col md={4}>
-                        <Card className="border-info mb-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Mitarbeiter Details
-                            </Card.Header>
-                            <Card.Body className="text-primary fs-3">
-                                {employee && (
-                                    <>
-                                        <p>Name: {employee.name} {employee.surname}</p>
-                                        <p>Abteilung: {department?.name}</p>
-                                        <p>Raum: {employee.room}</p>
-                                    </>
-                                )}
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card className="border-info mb-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Bearbeitung
-                            </Card.Header>
-                            <Card.Body>
-                                <div className="d-flex align-items-baseline">
-                                    <Button variant="primary" size="lg" disabled={!!assignedTicket?.ticketNr} onClick={handleBookTicket}>Ticket buchen</Button>
-                                    <p className="text-primary fs-4 mx-4">Ticket: {assignedTicket?.ticketNr}</p>
-                                </div>
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 9999,
+                }}>
+                    <Spinner animation="border" role="status" variant="primary">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>
+                </div>
+            )}
+            <div style={{filter: isLoading ? 'blur(5px)' : 'none'}}>
+                <NavBar />
+                <Container className="mt-4" style={{ minHeight: '520px' }}>
+                    <Row>
+                        <Col md={4}>
+                            <Card className="border-info mb-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                                    Mitarbeiter Details
+                                </Card.Header>
+                                <Card.Body className="text-primary fs-3">
+                                    {employee && (
+                                        <>
+                                            <p>Name: {employee.name} {employee.surname}</p>
+                                            <p>Abteilung: {department?.name}</p>
+                                            <p>Raum: {employee.room}</p>
+                                        </>
+                                    )}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={4}>
+                            <Card className="border-info mb-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                                    Bearbeitung
+                                </Card.Header>
+                                <Card.Body>
+                                    <div className="d-flex align-items-baseline">
+                                        <Button variant="primary" size="lg" disabled={!!assignedTicket?.ticketNr} onClick={handleBookTicket}>Ticket buchen</Button>
+                                        <p className="text-primary fs-4 mx-4">Ticket: {assignedTicket?.ticketNr}</p>
+                                    </div>
 
-                                <Form className="mt-3">
-                                    <Form.Label className="text-primary fs-4">Kommentar</Form.Label>
-                                    <Form.Control as="textarea" rows={6} value={comment} onChange={e => setComment(e.target.value)}/>
-                                </Form>
-                                <div className="d-flex align-items-baseline">
-                                    <Button onClick={handleCancelTicket} disabled={!assignedTicket?.ticketNr} className="m-2">Kunde nicht erschienen</Button>
-                                    <Button onClick={handleFinishTicket} disabled={!assignedTicket?.ticketNr}>Ticket abschließen</Button>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        {showAlert && (
-                            <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                                <Alert.Heading>Sind Sie sich sicher?</Alert.Heading>
-                                <p className="mt-3">
-                                    Wollen Sie wirklich alle Tickets löschen?
-                                </p>
-                                <p className="mb=3">
-                                    Diese Aktion kann nicht rückgängig gemacht werden!
-                                </p>
-                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                    <Button variant="danger" className="mx-3" onClick={handleConfirmDelete}>Ja, lösche
-                                        alles!</Button>
-                                    <Button variant="primary " onClick={() => setShowAlert(false)}>Nein</Button>
-                                </div>
-                            </Alert>
+                                    <Form className="mt-3">
+                                        <Form.Label className="text-primary fs-4">Kommentar</Form.Label>
+                                        <Form.Control as="textarea" rows={6} value={comment} onChange={e => setComment(e.target.value)}/>
+                                    </Form>
+                                    <div className="d-flex align-items-baseline">
+                                        <Button onClick={handleCancelTicket} disabled={!assignedTicket?.ticketNr} className="m-2">Kunde nicht erschienen</Button>
+                                        <Button onClick={handleFinishTicket} disabled={!assignedTicket?.ticketNr}>Ticket abschließen</Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={4}>
+                            {showAlert && (
+                                <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                                    <Alert.Heading>Sind Sie sich sicher?</Alert.Heading>
+                                    <p className="mt-3">
+                                        Wollen Sie wirklich alle Tickets löschen?
+                                    </p>
+                                    <p className="mb=3">
+                                        Diese Aktion kann nicht rückgängig gemacht werden!
+                                    </p>
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <Button variant="danger" className="mx-3" onClick={handleConfirmDelete}>Ja, lösche
+                                            alles!</Button>
+                                        <Button variant="primary " onClick={() => setShowAlert(false)}>Nein</Button>
+                                    </div>
+                                </Alert>
                             )}
 
-                        <Card>
-                        <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
-                                Danger Zone
-                            </Card.Header>
-                            <Card.Body className="d-flex justify-content-center">
-                                <Button variant="danger" className="fs-2" disabled={showAlert} onClick={handleDeleteAllTickets}>ALLE Tickets löschen!!!</Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-            <Footer/>
+                            <Card>
+                                <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
+                                    Danger Zone
+                                </Card.Header>
+                                <Card.Body className="d-flex justify-content-center">
+                                    <Button variant="danger" className="fs-2" disabled={showAlert} onClick={handleDeleteAllTickets}>ALLE Tickets löschen!!!</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+                <Footer/>
+            </div>
         </>
     );
 }

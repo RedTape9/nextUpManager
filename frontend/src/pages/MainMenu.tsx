@@ -12,7 +12,7 @@ import '../styles/colors.css';
 import WaitingTicketInterface from "../interfaces/WaitingTicketsInterface";
 import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
 import EmployeeBasicInfo from "../interfaces/EmployeeBasicInfo.ts";
-import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, Row, Spinner} from "react-bootstrap";
 import Ticket from "../interfaces/Ticket.ts";
 import {Client} from "@stomp/stompjs";
 import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
@@ -25,8 +25,8 @@ const MainMenu = () => {
     const [createdTicket, setCreatedTicket] = useState<Ticket | null>(null);
     const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false); // Hinzugefügt
     const navigate = useNavigate();
-
 
     useEffect(() => {
 
@@ -51,30 +51,32 @@ const MainMenu = () => {
     useEffect(() => {
         fetchTickets();
         fetchDepartments();
-    }, []);
-
-    useEffect(() => {
         fetchEmployees();
     }, []);
 
     const fetchTickets = async () => {
+        setIsLoading(true);
         try {
             const waitingData = await getAllWaitingTickets();
             setTickets(waitingData);
         } catch (error) {
             console.error('Error fetching tickets', error);
         }
+        setIsLoading(false);
     };
 
     const fetchDepartments = async () => {
+        setIsLoading(true);
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
             setSelectedDepartment(departmentsData[0].id);
         }
+        setIsLoading(false);
     };
 
     const fetchEmployees = async () => {
+        setIsLoading(true);
         try {
             const employeesData = await getAllEmployees();
             setEmployees(employeesData);
@@ -84,6 +86,7 @@ const MainMenu = () => {
         } catch (error) {
             console.error('Error fetching employees', error);
         }
+        setIsLoading(false);
     };
 
     const handleSelectEmployee = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -117,96 +120,116 @@ const MainMenu = () => {
     };
     return (
         <>
-            <NavBar />
-            <Container className="mt-4" style={{ minHeight: '520px' }}>
-                <Row>
-                    <Col md={4}>
-                        <Card className="border-info mb-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Ticket buchen
-                            </Card.Header>
-                            <Card.Body>
-                                <p className="text-primary brighter fs-2">Abteilung auswählen</p>
-                                <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedDepartment}
-                                             onChange={(e) => setSelectedDepartment(e.target.value)}>
-                                    {departments.map((department) => (
-                                        <option key={department.id} value={department.id}>
-                                            {department.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                                <Button variant="primary" size="lg" onClick={handleBook}>
-                                    Buchen
-                                </Button>
-                                {createdTicket && (
-                                    <Card className="mt-3 border-primary border-5">
-                                        <Card.Body className="bg-primary brighter">
-                                            <p className="card-title text-center text-light fs-2">Buchung
-                                                erfolgreich:</p>
-                                            <p className="card-text text-light text-center fs-2">Ihr
-                                                Ticket: {createdTicket.ticketNr}</p>
-                                        </Card.Body>
-                                    </Card>
-                                )}
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card className="border-info mb-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Tickets verwalten
-                            </Card.Header>
-                            <Card.Body>
-                                <p className="text-primary brighter fs-2">Mitarbeiter auswählen</p>
-                                <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedEmployee}
-                                             onChange={handleSelectEmployee}>
-                                    {employees.map((employee) => (
-                                        <option key={employee.id} value={employee.id}>
-                                            {employee.name + " " + employee.surname}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                                <Button variant="primary" size="lg" onClick={handleGoToEmployeePage}>
-                                    zum Mitarbeiter
-                                </Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card className="border-info mb-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                Warteliste
-                            </Card.Header>
-                            <Card.Body>
-                                {
-                                    tickets.length === 0 ? (
-                                        <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
-                                    ) :(
-                                        tickets
-                                            .slice(currentIndex, currentIndex + 7)
-                                            .map((ticket, index) => (
-                                                <Card key={index}
-                                                      className="w-auto text-bg-primary text-center m-2">
-                                                    <p className="ticketNr fs-5">{ticket.ticketNr}</p>
-                                                </Card>
-                                            )))
-                                }
-                                {tickets.length > 7 && (
-                                    <div className="d-flex justify-content-between m-2 ">
-                                        <Button className="bg-primary brighter" onClick={handlePrevious}>
-                                            ◀
-                                        </Button>
-                                        <Button className="bg-primary brighter" onClick={handleNext}>
-                                            ▶
-                                        </Button>
-                                    </div>
-                                )}
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-            <Footer/>
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 9999,
+                }}>
+                    <Spinner animation="border" role="status" variant="primary">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>
+                </div>
+            )}
+            <div style={{filter: isLoading ? 'blur(5px)' : 'none'}}>
+                <NavBar />
+                <Container className="mt-4" style={{ minHeight: '520px' }}>
+                    <Row>
+                        <Col md={4}>
+                            <Card className="border-info mb-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                                    Ticket buchen
+                                </Card.Header>
+                                <Card.Body>
+                                    <p className="text-primary brighter fs-2">Abteilung auswählen</p>
+                                    <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedDepartment}
+                                                 onChange={(e) => setSelectedDepartment(e.target.value)}>
+                                        {departments.map((department) => (
+                                            <option key={department.id} value={department.id}>
+                                                {department.name}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                    <Button variant="primary" size="lg" onClick={handleBook}>
+                                        Buchen
+                                    </Button>
+                                    {createdTicket && (
+                                        <Card className="mt-3 border-primary border-5">
+                                            <Card.Body className="bg-primary brighter">
+                                                <p className="card-title text-center text-light fs-2">Buchung
+                                                    erfolgreich:</p>
+                                                <p className="card-text text-light text-center fs-2">Ihr
+                                                    Ticket: {createdTicket.ticketNr}</p>
+                                            </Card.Body>
+                                        </Card>
+                                    )}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={4}>
+                            <Card className="border-info mb-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                                    Tickets verwalten
+                                </Card.Header>
+                                <Card.Body>
+                                    <p className="text-primary brighter fs-2">Mitarbeiter auswählen</p>
+                                    <Form.Select size="lg" className="bg-primary text-light mb-3" value={selectedEmployee}
+                                                 onChange={handleSelectEmployee}>
+                                        {employees.map((employee) => (
+                                            <option key={employee.id} value={employee.id}>
+                                                {employee.name + " " + employee.surname}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                    <Button variant="primary" size="lg" onClick={handleGoToEmployeePage}>
+                                        zum Mitarbeiter
+                                    </Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={4}>
+                            <Card className="border-info mb-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
+                                    Warteliste
+                                </Card.Header>
+                                <Card.Body>
+                                    {
+                                        tickets.length === 0 ? (
+                                            <p className="w-auto text-primary brighter fs-2 text-center m-2">keine Tickets</p>
+                                        ) :(
+                                            tickets
+                                                .slice(currentIndex, currentIndex + 7)
+                                                .map((ticket, index) => (
+                                                    <Card key={index}
+                                                          className="w-auto text-bg-primary text-center m-2">
+                                                        <p className="ticketNr fs-5">{ticket.ticketNr}</p>
+                                                    </Card>
+                                                )))
+                                    }
+                                    {tickets.length > 7 && (
+                                        <div className="d-flex justify-content-between m-2 ">
+                                            <Button className="bg-primary brighter" onClick={handlePrevious}>
+                                                ◀
+                                            </Button>
+                                            <Button className="bg-primary brighter" onClick={handleNext}>
+                                                ▶
+                                            </Button>
+                                        </div>
+                                    )}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+                <Footer/>
+            </div>
         </>
     );
 }
