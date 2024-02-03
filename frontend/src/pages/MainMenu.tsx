@@ -26,6 +26,7 @@ const MainMenu = () => {
     const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
 
