@@ -178,7 +178,7 @@ const EmployeePage = () => {
 
                                     <Form className="mt-3">
                                         <Form.Label className="text-primary fs-4">Kommentar</Form.Label>
-                                        <Form.Control as="textarea" rows={6} value={comment} onChange={e => setComment(e.target.value)}/>
+                                        <Form.Control as="textarea" rows={6} value={comment} onChange={e => setComment(e.target.value)} disabled={!assignedTicket?.ticketNr}/>
                                     </Form>
                                     <div className="d-flex align-items-baseline">
                                         <Button onClick={handleCancelTicket} disabled={!assignedTicket?.ticketNr} className="m-2">Kunde nicht erschienen</Button>
