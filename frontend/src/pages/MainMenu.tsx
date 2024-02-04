@@ -136,7 +136,7 @@ const MainMenu = () => {
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     zIndex: 9999,
                 }}>
-                    <Spinner animation="border" role="status" variant="primary">
+                    <Spinner animation="grow" role="status" variant="primary">
                         <span className="sr-only">Loading...</span>
                     </Spinner>
                 </div>
