@@ -16,7 +16,6 @@ const WaitingRoomPage = () => {
     const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-
         const client = new Client({
             brokerURL: 'wss://next-up-manager.onrender.com/wss',
             onConnect: () => {
