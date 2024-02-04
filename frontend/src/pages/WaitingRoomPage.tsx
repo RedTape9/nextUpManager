@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect} from 'react';
 import { getAllWaitingTickets, getAllInProgressTickets } from '../service/apiService';
 import WaitingTicketInterface from '../interfaces/WaitingTicketsInterface';
 import InProgressTicketInterface from '../interfaces/InProgressTicketsInterface';
@@ -13,7 +13,6 @@ const WaitingRoomPage = () => {
     const [inProgressTickets, setInProgressTickets] = useState<InProgressTicketInterface[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const client = new Client({
@@ -30,16 +29,14 @@ const WaitingRoomPage = () => {
         return () => {
             client.deactivate();
         }
-
-
     }, []);
-
 
     useEffect(() => {
         fetchTickets();
     }, []);
+
     const fetchTickets = async () => {
-        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
+        setIsLoading(true);
         try {
             const waitingData = await getAllWaitingTickets();
             setTickets(waitingData);
@@ -49,10 +46,8 @@ const WaitingRoomPage = () => {
             console.error('Error fetching tickets', error);
             setError('Error fetching tickets');
         }
-        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     };
-
 
     if (error) {
         return <div>Error: {error}</div>;

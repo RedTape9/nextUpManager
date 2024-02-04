@@ -1,4 +1,4 @@
-import {useState, useEffect, ChangeEvent, useRef} from 'react';
+import {useState, useEffect, ChangeEvent} from 'react';
 import NavBar from "../components/NavBar.tsx";
 import Footer from "../components/Footer.tsx";
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import {
     getAllDepartments,
     createTicketWithDepartment,
     getAllEmployees
-} from "../service/apiService";
+} from "../service/apiService.ts";
 import '../styles/colors.css';
 import WaitingTicketInterface from "../interfaces/WaitingTicketsInterface";
 import DepartmentGetForOption from "../interfaces/DepartmentGetForOption.ts";
@@ -26,7 +26,6 @@ const MainMenu = () => {
     const [employees, setEmployees] = useState<EmployeeBasicInfo[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
-    const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,30 +55,29 @@ const MainMenu = () => {
     }, []);
 
     const fetchTickets = async () => {
-        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
+        setIsLoading(true);
         try {
             const waitingData = await getAllWaitingTickets();
             setTickets(waitingData);
         } catch (error) {
             console.error('Error fetching tickets', error);
+        } finally {
+            setIsLoading(false);
         }
-        clearTimeout(loadingTimeoutRef.current);
-        setIsLoading(false);
     };
 
     const fetchDepartments = async () => {
-        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
+        setIsLoading(true);
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
             setSelectedDepartment(departmentsData[0].id);
         }
-        clearTimeout(loadingTimeoutRef.current);
         setIsLoading(false);
     };
 
     const fetchEmployees = async () => {
-        loadingTimeoutRef.current = setTimeout(() => setIsLoading(true), 1000);
+        setIsLoading(true);
         try {
             const employeesData = await getAllEmployees();
             setEmployees(employeesData);
@@ -88,9 +86,9 @@ const MainMenu = () => {
             }
         } catch (error) {
             console.error('Error fetching employees', error);
+        } finally {
+            setIsLoading(false);
         }
-        clearTimeout(loadingTimeoutRef.current);
-        setIsLoading(false);
     };
 
 
@@ -214,7 +212,7 @@ const MainMenu = () => {
                                                 .map((ticket, index) => (
                                                     <Card key={index}
                                                           className="w-auto text-bg-primary text-center m-2">
-                                                        <p className="ticketNr fs-5">{ticket.ticketNr}</p>
+                                                        <p className="ticketNr fs-4">{ticket.ticketNr}</p>
                                                     </Card>
                                                 )))
                                     }
