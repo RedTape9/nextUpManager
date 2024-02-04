@@ -15,7 +15,6 @@ const WaitingRoomPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-
         const client = new Client({
             brokerURL: 'wss://next-up-manager.onrender.com/wss',
             onConnect: () => {
