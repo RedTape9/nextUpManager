@@ -105,17 +105,17 @@ function ContactModal(props: ModalProps) {
     );
 }
 
-const renderTooltip = (props: TooltipProps) => (
+const renderTooltip = (props: TooltipProps, tooltipText: string) => (
     <Tooltip id="button-tooltip" {...props} className="bg-primary">
-        Für einen schnellen Überblick über die Funktionen, klicken Sie bitte hier.
+        {tooltipText}
     </Tooltip>
 );
 
-const ModalButton = ({ variant, text, onClick }: { variant: string, text: string, onClick?: () => void }) => (
+const ModalButton = ({ variant, text, onClick, tooltipText }: { variant: string, text: string, onClick?: () => void, tooltipText: string }) => (
     <OverlayTrigger
         placement="bottom"
         delay={{ show: 250, hide: 400 }}
-        overlay={renderTooltip}
+        overlay={(props: TooltipProps) => renderTooltip(props, tooltipText)}
     >
         <Button variant={variant} className="m-3" onClick={onClick}>{text}</Button>
     </OverlayTrigger>
@@ -129,7 +129,6 @@ const HomePage = () => {
             <NavBar/>
             <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
-
                     <Col md={6}>
                         <Image src={pic} fluid/>
                     </Col>
@@ -149,10 +148,9 @@ const HomePage = () => {
 
                                 </p>
 
-                                <ModalButton variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
+                                <ModalButton variant="primary" text="HowTo" onClick={() => setModalShow(true)} tooltipText="Für einen schnellen Überblick über die Funktionen, klicken Sie bitte hier." />
 
-                                <ModalButton variant="success" text="Kontakt" onClick={() => setContactModalShow(true)}/>
-
+                                <ModalButton variant="success" text="Kontakt" onClick={() => setContactModalShow(true)} tooltipText="Konnte ich Sie überzeugen? Dann kontaktieren Sie mich bitte hier."/>
                                 <DescriptionModal show={modalShow} onHide={() => setModalShow(false)} />
                                 <ContactModal show={contactModalShow} onHide={() => setContactModalShow(false)} />
                             </Card.Body>
