@@ -70,7 +70,7 @@ const WaitingRoomPage = () => {
                 }}>
                     <div className="d-flex align-items-center">
                         <Spinner animation="grow" role="status" variant="primary"/>
-                        <span className="ms-3">Loading...</span>
+                        <span className="ms-3 text-primary">Loading...</span>
                     </div>
                 </div>
             )}
