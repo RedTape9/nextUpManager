@@ -138,7 +138,7 @@ const EmployeePage = () => {
                     zIndex: 9999,
                 }}>
                     <Spinner animation="grow" role="status" variant="primary">
-                        <span className="sr-only">Loading...</span>
+                        <span className="visually-hidden">Loading...</span>
                     </Spinner>
                 </div>
             )}
