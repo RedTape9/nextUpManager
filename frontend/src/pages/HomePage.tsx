@@ -1,34 +1,77 @@
 import { useState } from 'react';
 import NavBar from "../components/NavBar.tsx";
 import Footer from "../components/Footer.tsx";
-import {Card, Col, Container, Row, Button, Modal, Image, Tooltip, OverlayTrigger} from "react-bootstrap";
+import {
+    Card,
+    Col,
+    Container,
+    Row,
+    Button,
+    Modal,
+    Image,
+    Tooltip,
+    OverlayTrigger,
+    ModalProps,
+    TooltipProps
+} from "react-bootstrap";
 import '../styles/colors.css';
 import pic from '../assets/nextUpManager_l.png';
 
-interface ModalProps {
-    onHide: () => void;
-    show: boolean;
-}
-
-function MyVerticallyCenteredModal(props: ModalProps) {
+function MydModalWithGrid(props: ModalProps) {
     return (
-        <Modal
-            {...props}
-            fullscreen={true}
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
+        <Modal {...props} fullscreen={true} aria-labelledby="contained-modal-title-vcenter">
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <h4>NextUp Manager Ticketsystem</h4>
+                    <p className="fs-5 text-primary">NextUp Management TicketSystem</p>
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <p>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                    dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                </p>
+            <Modal.Body className="grid-example">
+                <Container>
+                    <Row>
+                        <Col xs={12} md={8}>
+                            <p className="fs-5 text-primary">Technische Details:</p>
+                            <p>Ticket-Management-System: Implementierung eines vollständigen Lebenszyklus-Managements für Tickets, einschließlich Erstellung, Aktualisierung, Statusverfolgung und Löschung (CRUD). Verwendung von DTOs (Data Transfer Objects) für effizientes Datenhandling.</p>
+                            <p>Mitarbeiterverwaltung: Entwicklung von Funktionen zur Abrufung und Verwaltung von Mitarbeiterdaten, die Operationen wie das Abrufen von Mitarbeiterinformationen für spezifische Aufgaben ermöglichen.</p>
+                            <p>Abteilungsoperationen: Implementierung von Funktionen zur Handhabung abteilungsbezogener Daten, einschließlich Abrufen von Abteilungsdetails und Aktualisieren von Abteilungsnummern.</p>
+                            <p>Echtzeit-Updates: Integration von WebSocket mit STOMP für Echtzeit-Nachrichtenübermittlung, die sofortige Updates über Ticketstatus ermöglicht.</p>
+                            <p>Unterstützung des clientseitigen Routings: Konfiguration von Spring Boot zur Handhabung von Frontend-Routing-Anfragen für eine Single-Page-Application, um eine reibungslose Navigation der Benutzeroberfläche zu gewährleisten.</p>
+                        </Col>
+
+                        <Col xs={6} md={4}>
+                            <p className="fs-5 text-primary">Hauptfunktionen:</p>
+                            <p>Navigation und Routing: Implementierung einer benutzerfreundlichen Navigation durch Einsatz von React Router für eine Single-Page Application. Die App umfasst Seiten wie das Hauptmenü, den Wartebereich, Mitarbeiterdetails und die Startseite.</p>
+                            <p>Dynamische Inhalte und Echtzeit-Updates: Verwendung von WebSockets zur Anzeige von Echtzeit-Updates in der Benutzeroberfläche. Implementierung von Funktionalitäten zum Abrufen und Anzeigen von Tickets, Mitarbeiter- und Abteilungsdaten.</p>
+                            <p>Mitarbeiter- und Ticketmanagement: Entwickelt interaktive Schnittstellen, die es ermöglichen, Tickets zu buchen, zu verwalten und Mitarbeiterdetails zu betrachten und zu bearbeiten.</p>
+                        </Col>
+
+                    </Row>
+
+                    <Row>
+                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                            <p className="fs-5 text-primary">Backend-Technologien:</p>
+                            <p>Spring Boot (Java)</p>
+                            <p>MongoDB</p>
+                            <p>WebSocket mit STOMP-Protokoll</p>
+                            <p>Lombok</p>
+                            <p>Spring Data MongoDB</p>
+                        </Col>
+                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                            <p className="fs-5 text-primary">Frontend-Technologien:</p>
+                            <p>React.js</p>
+                            <p>Bootstrap for React</p>
+                            <p>CSS</p>
+                            <p>Axios</p>
+                            <p>React Router</p>
+                            <p>React Hooks und Zustandsmanagement</p>
+                            <p>Axios</p>
+                        </Col>
+                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                            <p className="fs-5 text-primary">Sicherheit und Konfiguration:</p>
+                            <p>CORS-Konfiguration</p>
+                            <p>WebSocket Sicherheitskonfiguration</p>
+                        </Col>
+                    </Row>
+                </Container>
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={props.onHide}>Zurück</Button>
@@ -37,7 +80,32 @@ function MyVerticallyCenteredModal(props: ModalProps) {
     );
 }
 
-const renderTooltip = (props: any) => (
+function ContactModal(props: ModalProps) {
+    return (
+        <Modal {...props} fullscreen={true} aria-labelledby="contained-modal-title-vcenter">
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    <p className="fs-5 text-primary">Kontaktinformationen</p>
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="grid-example">
+                <Container>
+                    <Row>
+                        <Col xs={12} md={8}>
+
+                            <p className="fs-5 text-primary">E-Mail:  <a href="mailto:ser.jaudszims@gmail.com">ser.jaudszims@gmail.com</a></p>
+                        </Col>
+                    </Row>
+                </Container>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide}>Zurück</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
+
+const renderTooltip = (props: TooltipProps) => (
     <Tooltip id="button-tooltip" {...props} className="bg-primary">
         Für einen schnellen Überblick über die Funktionen, klicken Sie bitte hier.
     </Tooltip>
@@ -55,14 +123,18 @@ const Example = ({ variant, text, onClick }: { variant: string, text: string, on
 
 const HomePage = () => {
     const [modalShow, setModalShow] = useState(false);
-
+    const [contactModalShow, setContactModalShow] = useState(false);
     return (
         <>
             <NavBar/>
             <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
+
                     <Col md={6}>
-                        <Card className="border-info">
+                        <Image src={pic} fluid/>
+                    </Col>
+                    <Col md={6}>
+                        <Card className="border-info m-2">
                             <Card.Header className="w-auto bg-primary brighter text-center text-light">
                                 <p className="mb-1">Willkommen auf NextUp Manger, der digitalen Ticktverwaltungs - SPA</p>
                             </Card.Header>
@@ -76,26 +148,15 @@ const HomePage = () => {
                                     Tauchen Sie ein in die Welt von NextUp Manager, wo Warten und Arbeiten nahtlos zusammenfließen.
 
                                 </p>
-                                <Row>
-                                    <Col sm={6} lg={2}>
-                                        <Example variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
-                                    </Col>
-                                    <Col sm={6} lg={2}>
-                                        <Example variant="primary" text="Stack"/>
-                                    </Col>
-                                    <Col sm={6} lg={2}>
-                                        <Example variant="primary" text="Code" />
-                                    </Col>
-                                    <Col sm={6} lg={2}>
-                                        <Example variant="success" text="Kontakt"/>
-                                    </Col>
-                                </Row>
-                                <MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
+
+                                <Example variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
+
+                                <Example variant="success" text="Kontakt" onClick={() => setContactModalShow(true)}/>
+
+                                <MydModalWithGrid show={modalShow} onHide={() => setModalShow(false)} />
+                                <ContactModal show={contactModalShow} onHide={() => setContactModalShow(false)} />
                             </Card.Body>
                         </Card>
-                    </Col>
-                    <Col md={6}>
-                        <Image src={pic} fluid/>
                     </Col>
                 </Row>
             </Container>
