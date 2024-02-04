@@ -68,13 +68,14 @@ const WaitingRoomPage = () => {
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     zIndex: 9999,
                 }}>
-                    <Spinner animation="grow" role="status" variant="primary">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
+                    <div className="d-flex align-items-center">
+                        <Spinner animation="grow" role="status" variant="primary"/>
+                        <span className="ms-3">Loading...</span>
+                    </div>
                 </div>
             )}
             <div style={{filter: isLoading ? 'blur(5px)' : 'none'}}>
-                <NavBar />
+                <NavBar/>
                 <Container className="mt-4" style={{ minHeight: '520px' }}>
                     <Row>
                         <Col md={3}>
