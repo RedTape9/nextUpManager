@@ -17,7 +17,7 @@ import {
 import '../styles/colors.css';
 import pic from '../assets/nextUpManager_l.png';
 
-function MydModalWithGrid(props: ModalProps) {
+function DescriptionModal(props: ModalProps) {
     return (
         <Modal {...props} fullscreen={true} aria-labelledby="contained-modal-title-vcenter">
             <Modal.Header closeButton>
@@ -37,7 +37,7 @@ function MydModalWithGrid(props: ModalProps) {
                             <p>Unterstützung des clientseitigen Routings: Konfiguration von Spring Boot zur Handhabung von Frontend-Routing-Anfragen für eine Single-Page-Application, um eine reibungslose Navigation der Benutzeroberfläche zu gewährleisten.</p>
                         </Col>
 
-                        <Col xs={6} md={4}>
+                        <Col xs={12} md={4}>
                             <p className="fs-5 text-primary">Hauptfunktionen:</p>
                             <p>Navigation und Routing: Implementierung einer benutzerfreundlichen Navigation durch Einsatz von React Router für eine Single-Page Application. Die App umfasst Seiten wie das Hauptmenü, den Wartebereich, Mitarbeiterdetails und die Startseite.</p>
                             <p>Dynamische Inhalte und Echtzeit-Updates: Verwendung von WebSockets zur Anzeige von Echtzeit-Updates in der Benutzeroberfläche. Implementierung von Funktionalitäten zum Abrufen und Anzeigen von Tickets, Mitarbeiter- und Abteilungsdaten.</p>
@@ -47,7 +47,7 @@ function MydModalWithGrid(props: ModalProps) {
                     </Row>
 
                     <Row>
-                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                        <Col xs={12} md={4} style={{ marginTop: '20px' }}>
                             <p className="fs-5 text-primary">Backend-Technologien:</p>
                             <p>Spring Boot (Java)</p>
                             <p>MongoDB</p>
@@ -55,7 +55,7 @@ function MydModalWithGrid(props: ModalProps) {
                             <p>Lombok</p>
                             <p>Spring Data MongoDB</p>
                         </Col>
-                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                        <Col xs={12} md={4} style={{ marginTop: '20px' }}>
                             <p className="fs-5 text-primary">Frontend-Technologien:</p>
                             <p>React.js</p>
                             <p>Bootstrap for React</p>
@@ -65,7 +65,7 @@ function MydModalWithGrid(props: ModalProps) {
                             <p>React Hooks und Zustandsmanagement</p>
                             <p>Axios</p>
                         </Col>
-                        <Col xs={6} md={4} style={{ marginTop: '20px' }}>
+                        <Col xs={12} md={4} style={{ marginTop: '20px' }}>
                             <p className="fs-5 text-primary">Sicherheit und Konfiguration:</p>
                             <p>CORS-Konfiguration</p>
                             <p>WebSocket Sicherheitskonfiguration</p>
@@ -111,7 +111,7 @@ const renderTooltip = (props: TooltipProps) => (
     </Tooltip>
 );
 
-const Example = ({ variant, text, onClick }: { variant: string, text: string, onClick?: () => void }) => (
+const ModalButton = ({ variant, text, onClick }: { variant: string, text: string, onClick?: () => void }) => (
     <OverlayTrigger
         placement="bottom"
         delay={{ show: 250, hide: 400 }}
@@ -149,11 +149,11 @@ const HomePage = () => {
 
                                 </p>
 
-                                <Example variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
+                                <ModalButton variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
 
-                                <Example variant="success" text="Kontakt" onClick={() => setContactModalShow(true)}/>
+                                <ModalButton variant="success" text="Kontakt" onClick={() => setContactModalShow(true)}/>
 
-                                <MydModalWithGrid show={modalShow} onHide={() => setModalShow(false)} />
+                                <DescriptionModal show={modalShow} onHide={() => setModalShow(false)} />
                                 <ContactModal show={contactModalShow} onHide={() => setContactModalShow(false)} />
                             </Card.Body>
                         </Card>
