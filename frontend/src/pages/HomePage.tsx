@@ -14,17 +14,16 @@ function MyVerticallyCenteredModal(props: ModalProps) {
     return (
         <Modal
             {...props}
-            size="lg"
+            fullscreen={true}
             aria-labelledby="contained-modal-title-vcenter"
             centered
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Modal heading
+                    <h4>NextUp Manager Ticketsystem</h4>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <h4>Centered Modal</h4>
                 <p>
                     Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
                     dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
@@ -32,7 +31,7 @@ function MyVerticallyCenteredModal(props: ModalProps) {
                 </p>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <Button onClick={props.onHide}>Zurück</Button>
             </Modal.Footer>
         </Modal>
     );
@@ -77,12 +76,20 @@ const HomePage = () => {
                                     Tauchen Sie ein in die Welt von NextUp Manager, wo Warten und Arbeiten nahtlos zusammenfließen.
 
                                 </p>
-                                <div className="d-flex">
-                                    <Example variant="success" text="Funktionalität" onClick={() => setModalShow(true)} />
-                                    <Example variant="primary" text="Tech Stack"/>
-                                    <Example variant="warning" text="Source Code" />
-                                    <Example variant="danger" text="Über mich"/>
-                                </div>
+                                <Row>
+                                    <Col sm={6} lg={2}>
+                                        <Example variant="primary" text="HowTo" onClick={() => setModalShow(true)} />
+                                    </Col>
+                                    <Col sm={6} lg={2}>
+                                        <Example variant="primary" text="Stack"/>
+                                    </Col>
+                                    <Col sm={6} lg={2}>
+                                        <Example variant="primary" text="Code" />
+                                    </Col>
+                                    <Col sm={6} lg={2}>
+                                        <Example variant="success" text="Kontakt"/>
+                                    </Col>
+                                </Row>
                                 <MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
                             </Card.Body>
                         </Card>
