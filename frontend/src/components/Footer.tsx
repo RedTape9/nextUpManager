@@ -6,8 +6,8 @@ function Footer() {
             <Container>
                 <Row>
                     <Col>
-                        <p>2024 <a href="https://github.com/RedTape9/nextUpManager" target="_blank" rel="noopener noreferrer" className="text-white">RedTape9</a>.
-                            Open Source Project</p>
+                        <p>2024 <a href="https://github.com/RedTape9/nextUpManager" target="_blank" rel="noopener noreferrer" className="text-white">RedTape9</a>
+                            - Open Source Project</p>
                     </Col>
                 </Row>
             </Container>
