@@ -14,6 +14,7 @@ import {
     ModalProps,
     TooltipProps
 } from "react-bootstrap";
+import {EnvelopeAtFill, Github, Linkedin} from 'react-bootstrap-icons';
 import '../styles/colors.css';
 import pic from '../assets/nextUpManager_l.png';
 
@@ -93,7 +94,14 @@ function ContactModal(props: ModalProps) {
                     <Row>
                         <Col xs={12} md={8}>
 
-                            <p className="fs-5 text-primary">E-Mail:  <a href="mailto:ser.jaudszims@gmail.com">ser.jaudszims@gmail.com</a></p>
+
+                            <p className="fs-5 text-primary">E-Mail: <a
+                                href="mailto:ser.jaudszims@gmail.com"><EnvelopeAtFill color="blue" size={32}></EnvelopeAtFill> </a></p>
+                            <p className="fs-5 text-primary">GitHub: <a href="https://github.com/RedTape9"><Github
+                                color="blue" size={32}/></a></p>
+                            <p className="fs-5 text-primary">LinkedIn: <a
+                                href="https://www.linkedin.com/in/sergej-jaudszims-80672a250/"><Linkedin color="blue" size={32}/></a></p>
+
                         </Col>
                     </Row>
                 </Container>
@@ -111,10 +119,15 @@ const renderTooltip = (props: TooltipProps, tooltipText: string) => (
     </Tooltip>
 );
 
-const ModalButton = ({ variant, text, onClick, tooltipText }: { variant: string, text: string, onClick?: () => void, tooltipText: string }) => (
+const ModalButton = ({variant, text, onClick, tooltipText}: {
+    variant: string,
+    text: string,
+    onClick?: () => void,
+    tooltipText: string
+}) => (
     <OverlayTrigger
         placement="bottom"
-        delay={{ show: 250, hide: 400 }}
+        delay={{show: 250, hide: 400 }}
         overlay={(props: TooltipProps) => renderTooltip(props, tooltipText)}
     >
         <Button variant={variant} className="m-3" onClick={onClick}>{text}</Button>

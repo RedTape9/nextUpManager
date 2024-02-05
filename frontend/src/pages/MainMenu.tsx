@@ -16,6 +16,7 @@ import {Button, Card, Col, Container, Form, Row, Spinner} from "react-bootstrap"
 import Ticket from "../interfaces/Ticket.ts";
 import {Client} from "@stomp/stompjs";
 import TicketCreateDTO from "../interfaces/TicketCreateDTO.ts";
+import {ArrowLeft, ArrowRight} from "react-bootstrap-icons";
 
 const MainMenu = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -220,10 +221,10 @@ const MainMenu = () => {
                                     {tickets.length > 7 && (
                                         <div className="d-flex justify-content-between m-2 ">
                                             <Button className="bg-primary brighter" onClick={handlePrevious}>
-                                                ◀
+                                                <ArrowLeft color="white" size={30} />
                                             </Button>
                                             <Button className="bg-primary brighter" onClick={handleNext}>
-                                                ▶
+                                                <ArrowRight color="white" size={30} />
                                             </Button>
                                         </div>
                                     )}

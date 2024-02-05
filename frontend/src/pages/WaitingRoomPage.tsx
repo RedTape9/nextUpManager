@@ -7,6 +7,7 @@ import '../styles/colors.css';
 import Footer from "../components/Footer.tsx";
 import {Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {Client} from "@stomp/stompjs";
+import {CarFrontFill, DoorOpenFill} from "react-bootstrap-icons";
 
 const WaitingRoomPage = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -124,7 +125,7 @@ const WaitingRoomPage = () => {
                         <Col md={3}>
                             <Card className="border-info mb-3">
                                 <Card.Header className="w-auto bg-primary brighter text-center text-light">
-                                    <p className="mb-1">Wartenbereich</p> <p className="mb-1">KFZ-Zulassungsstelle</p>
+                                    <p className="mb-1">Wartenbereich</p> <p className="mb-1"><CarFrontFill color="white"></CarFrontFill> KFZ-Zulassungsstelle</p>
                                 </Card.Header>
                                 <Card.Body>
                                     {tickets.length === 0 ? (
@@ -153,7 +154,7 @@ const WaitingRoomPage = () => {
                                         inProgressTickets.map((ticket, index) => (
                                             <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
                                                   style={{width: '350px', height: '100px'}}>
-                                                <p className="ticketNr fs-4 text-center"><p>{ticket.ticketNr}</p>Raum: {ticket.room}</p>
+                                                <p className="ticketNr fs-5 text-center"><p>{ticket.ticketNr}</p><DoorOpenFill color="white"></DoorOpenFill>Raum: {ticket.room}</p>
                                             </Card>
                                         ))
                                     )}
