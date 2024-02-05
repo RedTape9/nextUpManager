@@ -14,16 +14,19 @@ import {
     ModalProps,
     TooltipProps
 } from "react-bootstrap";
-import {EnvelopeAtFill, Github, Linkedin} from 'react-bootstrap-icons';
+import {BoxArrowInUpRight, EnvelopeAtFill, Github, Linkedin} from 'react-bootstrap-icons';
 import '../styles/colors.css';
 import pic from '../assets/nextUpManager_l.png';
 
 function DescriptionModal(props: ModalProps) {
     return (
         <Modal {...props} fullscreen={true} aria-labelledby="contained-modal-title-vcenter">
-            <Modal.Header closeButton>
+            <Modal.Header className="bg-primary brighter" closeButton closeVariant="white">
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <p className="fs-5 text-primary">NextUp Management TicketSystem</p>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <BoxArrowInUpRight color="white" size={32}/>
+                        <p className="fs-5 bg-primary text-light m-2">NextUp Manager</p>
+                    </div>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="grid-example">
@@ -84,9 +87,12 @@ function DescriptionModal(props: ModalProps) {
 function ContactModal(props: ModalProps) {
     return (
         <Modal {...props} fullscreen={true} aria-labelledby="contained-modal-title-vcenter">
-            <Modal.Header closeButton>
+            <Modal.Header className="bg-primary brighter" closeButton closeVariant="white">
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <p className="fs-5 text-primary">Kontaktinformationen</p>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <BoxArrowInUpRight color="white" size={32}/>
+                        <p className="fs-5 bg-primary text-light m-2">Kontakt</p>
+                    </div>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="grid-example">

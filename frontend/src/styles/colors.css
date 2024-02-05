@@ -22,3 +22,9 @@
     font-weight: bold;
     text-shadow: none;
 }
+
+.footer {
+    height: auto;
+    bottom: 0;
+    width: 100%;
+}
