@@ -14,6 +14,8 @@ const WaitingRoomPage = () => {
     const [inProgressTickets, setInProgressTickets] = useState<InProgressTicketInterface[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [highlightedTicketIndex, setHighlightedTicketIndex] = useState(0);
+
 
     useEffect(() => {
         const client = new Client({
@@ -35,6 +37,14 @@ const WaitingRoomPage = () => {
     useEffect(() => {
         fetchTickets();
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHighlightedTicketIndex(prevIndex => (prevIndex + 1) % inProgressTickets.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [inProgressTickets.length]);
 
     const fetchTickets = async () => {
         setIsLoading(true);
@@ -152,7 +162,7 @@ const WaitingRoomPage = () => {
                                         <p className="w-auto text-primary brighter fs-2 text-center m-2">Derzeit keine Aufrufe</p>
                                     ) :(
                                         inProgressTickets.map((ticket, index) => (
-                                            <Card key={index} className="text-bg-primary d-flex align-items-center justify-content-center m-3"
+                                            <Card key={index} className={`text-bg-primary d-flex align-items-center justify-content-center m-3 ${index === highlightedTicketIndex ? 'bg-primary brighter' : ''}`}
                                                   style={{width: '350px', height: '100px'}}>
                                                 <p className="ticketNr fs-5 text-center"><p>{ticket.ticketNr}</p><DoorOpenFill color="white"></DoorOpenFill>Raum: {ticket.room}</p>
                                             </Card>
