@@ -6,3 +6,19 @@
     background-color: #0d6efd !important;
     color: white !important;
 }
+
+.nav-link.active {
+    color: white !important;
+    font-weight: bold;
+    text-shadow: -1px 0 darkblue, 0 1px darkblue, 1px 0 darkblue, 0 -1px darkblue;
+}
+
+.nav-link:hover {
+    font-weight: bold;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.nav-link.active:hover {
+    font-weight: bold;
+    text-shadow: none;
+}

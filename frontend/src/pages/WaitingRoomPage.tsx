@@ -7,7 +7,7 @@ import '../styles/colors.css';
 import Footer from "../components/Footer.tsx";
 import {Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {Client} from "@stomp/stompjs";
-import {CarFrontFill, DoorOpenFill} from "react-bootstrap-icons";
+import {CarFrontFill, DoorOpenFill, PeopleFill, VectorPen} from "react-bootstrap-icons";
 
 const WaitingRoomPage = () => {
     const [tickets, setTickets] = useState<WaitingTicketInterface[]>([]);
@@ -82,7 +82,7 @@ const WaitingRoomPage = () => {
                         <Col md={3}>
                             <Card className="border-info mb-2">
                                 <Card.Header className="w-auto bg-primary brighter text-center text-light">
-                                    <p className="mb-1">Wartenbereich</p><p className="mb-1">Einwohnermeldeamt</p>
+                                    <p className="mb-1"><PeopleFill color="white"></PeopleFill> Einwohnermeldeamt</p>
                                 </Card.Header>
                                 <Card.Body>
                                     {
@@ -91,7 +91,7 @@ const WaitingRoomPage = () => {
                                         ) :(
                                             tickets
                                                 .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'E')
-                                                .slice(0, 7)
+                                                .slice(0, 8)
                                                 .map((ticket, index) => (
                                                     <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                                         <p className="ticketNr fs-4">{ticket.ticketNr}</p>
@@ -104,7 +104,7 @@ const WaitingRoomPage = () => {
                         <Col md={3}>
                             <Card className="border-info mb-2">
                                 <Card.Header className="w-auto bg-primary brighter text-center text-light">
-                                    <p className="mb-1">Wartenbereich</p><p className="mb-1">Standesamt</p>
+                                    <p className="mb-1"><VectorPen color="white"></VectorPen> Standesamt</p>
                                 </Card.Header>
                                 <Card.Body>
                                     {
@@ -113,7 +113,7 @@ const WaitingRoomPage = () => {
                                         ) :(
                                             tickets
                                                 .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'S')
-                                                .slice(0, 7)
+                                                .slice(0, 8)
                                                 .map((ticket, index) => (
                                                     <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                                         <p className="ticketNr fs-4">{ticket.ticketNr}</p>
@@ -125,7 +125,7 @@ const WaitingRoomPage = () => {
                         <Col md={3}>
                             <Card className="border-info mb-3">
                                 <Card.Header className="w-auto bg-primary brighter text-center text-light">
-                                    <p className="mb-1">Wartenbereich</p> <p className="mb-1"><CarFrontFill color="white"></CarFrontFill> KFZ-Zulassungsstelle</p>
+                                    <p className="mb-1"><CarFrontFill color="white"></CarFrontFill> KFZ-Zulassungsstelle</p>
                                 </Card.Header>
                                 <Card.Body>
                                     {tickets.length === 0 ? (
@@ -133,7 +133,7 @@ const WaitingRoomPage = () => {
                                     ) :(
                                         tickets
                                             .filter(ticket => ticket.ticketNr[0].toUpperCase() === 'K')
-                                            .slice(0, 7)
+                                            .slice(0, 8)
                                             .map((ticket, index) => (
                                                 <Card key={index} className="w-auto text-bg-primary text-center m-2">
                                                     <p className="ticketNr fs-4">{ticket.ticketNr}</p>
