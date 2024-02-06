@@ -140,6 +140,7 @@ const ModalButton = ({variant, text, onClick, tooltipText}: {
     </OverlayTrigger>
 );
 
+
 const HomePage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [contactModalShow, setContactModalShow] = useState(false);
