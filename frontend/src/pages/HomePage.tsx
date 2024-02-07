@@ -12,7 +12,7 @@ import {
     Tooltip,
     OverlayTrigger,
     ModalProps,
-    TooltipProps
+    TooltipProps, Spinner
 } from "react-bootstrap";
 import {BoxArrowInUpRight, EnvelopeAtFill, Github, Linkedin} from 'react-bootstrap-icons';
 import '../styles/colors.css';
@@ -144,13 +144,16 @@ const ModalButton = ({variant, text, onClick, tooltipText}: {
 const HomePage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [contactModalShow, setContactModalShow] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     return (
         <>
             <NavBar/>
             <Container className="mt-4" style={{ minHeight: '520px' }}>
                 <Row>
                     <Col md={6}>
-                        <Image src={pic} fluid/>
+                        {!imageLoaded && <Spinner animation="border" />}
+                        <Image src={pic} fluid onLoad={() => setImageLoaded(true)} />
                     </Col>
                     <Col md={6}>
                         <Card className="border-info m-2">
