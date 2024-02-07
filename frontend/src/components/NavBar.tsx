@@ -9,7 +9,7 @@ function NavBar() {
     return (
         <Navbar expand="lg" className="bg-primary brighter-navbar ">
             <Container>
-                <Navbar.Brand as={Link} to="/" className="text-light">
+                <Navbar.Brand as={Link} to="/" className="text-white">
                     <BoxArrowInUpRight color="white" size={32}></BoxArrowInUpRight> NextUp Manager
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
