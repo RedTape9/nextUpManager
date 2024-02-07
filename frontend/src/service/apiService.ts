@@ -51,15 +51,6 @@ export const getAllDepartments = async () => {
     }
 };
 
-/*export const getDepartmentById = async (id: string) => {
-    try {
-        const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
-        console.log('Fetched department:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching department', error);
-    }
-};*/
 
 export const getDepartmentById = async (id: string): Promise<DepartmentGetForOption | null> => {
     try {
@@ -92,16 +83,6 @@ export const getEmployeeById = async (id: string) => {
     }
 }
 
-
-/*export const createTicketWithDepartment = async (departmentName: string) => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/department/${departmentName}`, {});
-        console.log('Created ticket:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error creating ticket', error);
-    }
-};*/
 
 export const createTicketWithDepartment = async (ticketCreateDTO: TicketCreateDTO) => {
     try {

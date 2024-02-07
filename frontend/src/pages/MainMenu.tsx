@@ -189,7 +189,7 @@ const MainMenu = () => {
                                                  onChange={handleSelectEmployee}>
                                         {employees.map((employee) => (
                                             <option key={employee.id} value={employee.id}>
-                                                {employee.name + " " + employee.surname}
+                                                {employee.name + " " + employee.surname + " - " + employee.room}
                                             </option>
                                         ))}
                                     </Form.Select>
