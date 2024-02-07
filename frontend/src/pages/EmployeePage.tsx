@@ -171,7 +171,7 @@ const EmployeePage = () => {
                                 <Card.Body>
                                     <div className="d-flex align-items-baseline">
                                         <Button variant="primary" size="lg" disabled={!!assignedTicket?.ticketNr} onClick={handleBookTicket}>Ticket buchen</Button>
-                                        <p className="text-primary fs-4 mx-4">Ticket: {assignedTicket?.ticketNr}</p>
+                                        <p className="text-primary fs-4 mx-4">{assignedTicket?.ticketNr}</p>
                                     </div>
 
                                     <Form className="mt-3">
