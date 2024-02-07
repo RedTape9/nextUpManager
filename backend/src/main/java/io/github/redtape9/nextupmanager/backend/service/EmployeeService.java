@@ -37,6 +37,7 @@ public class EmployeeService {
                     employeeGetForOptionDTO.setId(employee.getId());
                     employeeGetForOptionDTO.setName(employee.getName());
                     employeeGetForOptionDTO.setSurname(employee.getSurname());
+                    employeeGetForOptionDTO.setRoom(employee.getRoom());
                     return employeeGetForOptionDTO;
                 })
                 .toList();
