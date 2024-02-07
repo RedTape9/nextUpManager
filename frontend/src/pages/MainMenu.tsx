@@ -181,7 +181,7 @@ const MainMenu = () => {
                         <Col md={4}>
                             <Card className="border-info mb-2">
                                 <Card.Header className="w-auto bg-primary brighter text-center text-light fs-2">
-                                    Tickets verwalten
+                                    Verwaltung
                                 </Card.Header>
                                 <Card.Body>
                                     <p className="text-primary brighter fs-2">Mitarbeiter auswählen</p>
@@ -189,7 +189,7 @@ const MainMenu = () => {
                                                  onChange={handleSelectEmployee}>
                                         {employees.map((employee) => (
                                             <option key={employee.id} value={employee.id}>
-                                                {employee.name + " " + employee.surname + " - " + employee.room}
+                                                {employee.name + " " + employee.surname + " - ( " + employee.room.substring(0,1) + " )"}
                                             </option>
                                         ))}
                                     </Form.Select>
