@@ -148,19 +148,38 @@ const HomePage = () => {
 
     return (
         <>
-            <NavBar/>
-            <Container className="mt-4" style={{ minHeight: '520px' }}>
-                <Row>
-                    <Col md={6}>
-                        {!imageLoaded && <Spinner animation="border" />}
-                        <Image src={pic} fluid onLoad={() => setImageLoaded(true)} />
-                    </Col>
-                    <Col md={6}>
-                        <Card className="border-info m-2">
-                            <Card.Header className="w-auto bg-primary brighter text-center text-light">
-                                <p className="mb-1">Willkommen auf NextUp Manger, der digitalen Ticktverwaltungs - SPA</p>
-                            </Card.Header>
-                            <Card.Body>
+            {!imageLoaded && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 9999,
+                }}>
+                    <div className="d-flex align-items-center">
+                        <Spinner animation="grow" role="status" variant="primary"/>
+                        <span className="ms-3 text-primary">Loading...</span>
+                    </div>
+                </div>
+            )}
+            <div style={{filter: !imageLoaded ? 'blur(5px)' : 'none'}}>
+                <NavBar/>
+                <Container className="mt-4" style={{ minHeight: '520px' }}>
+                    <Row>
+                        <Col md={6}>
+                            <Image src={pic} fluid onLoad={() => setImageLoaded(true)} />
+                        </Col>
+                        <Col md={6}>
+                            <Card className="border-info m-2">
+                                <Card.Header className="w-auto bg-primary brighter text-center text-light">
+                                    <p className="mb-1">Willkommen auf NextUp Manger, der digitalen Ticktverwaltungs - SPA</p>
+                                </Card.Header>
+                                <Card.Body>
                                 <p>Erleben Sie eine neue Art der Ticketverwaltung und Mitarbeiterkoordination.
                                     NextUp Manager bringt Effizienz und Übersichtlichkeit in Ihren Alltag – sei es in der Warteschlange oder am Arbeitsplatz.
                                     Mit nur wenigen Klicks können Sie Tickets buchen, den Status verfolgen und Echtzeit-Updates erhalten.
@@ -182,8 +201,9 @@ const HomePage = () => {
                 </Row>
             </Container>
             <Footer/>
-        </>
-    );
-};
+        </div>
+    </>
+);
+}
 
 export default HomePage;
