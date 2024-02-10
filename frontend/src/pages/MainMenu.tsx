@@ -69,12 +69,17 @@ const MainMenu = () => {
 
     const fetchDepartments = async () => {
         setIsLoading(true);
+        try{
         const departmentsData = await getAllDepartments();
         setDepartments(departmentsData);
         if (!selectedDepartment && departmentsData.length > 0) {
             setSelectedDepartment(departmentsData[0].id);
         }
+        } catch (error) {
+            console.error('Error fetching departments', error);
+        } finally {
         setIsLoading(false);
+        }
     };
 
     const fetchEmployees = async () => {

@@ -11,7 +11,7 @@ const API_BASE_URL_EMPLOYEES = '/api/employees';
 export const getAllWaitingTickets = async () => {
     try {
         const response = await axios.get(API_BASE_URL+ '/waiting');
-        console.log('Fetched tickets:', response.data);
+        // console.log('Fetched tickets:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching tickets', error);
@@ -22,7 +22,7 @@ export const getAllWaitingTickets = async () => {
 export const getAllInProgressTickets = async () => {
     try {
         const response = await axios.get(API_BASE_URL + '/in-progress');
-        console.log('Fetched tickets:', response.data);
+        // console.log('Fetched tickets:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching tickets', error);
@@ -44,7 +44,7 @@ export const getInProgressTicketByEmployeeId = async (employeeId: string): Promi
 export const getAllDepartments = async () => {
     try {
         const response = await axios.get(API_BASE_URL_DEPARTMENTS);
-        console.log('Fetched departments:', response.data);
+        // console.log('Fetched departments:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching departments', error);
@@ -55,7 +55,7 @@ export const getAllDepartments = async () => {
 export const getDepartmentById = async (id: string): Promise<DepartmentGetForOption | null> => {
     try {
         const response = await axios.get(`${API_BASE_URL_DEPARTMENTS}/${id}`);
-        console.log('Fetched department:', response.data);
+        // console.log('Fetched department:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching department', error);
@@ -66,7 +66,7 @@ export const getDepartmentById = async (id: string): Promise<DepartmentGetForOpt
 export const getAllEmployees = async () => {
     try {
         const response = await axios.get(API_BASE_URL_EMPLOYEES);
-        console.log('Fetched employees:', response.data);
+        //console.log('Fetched employees:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching employees', error);
@@ -76,7 +76,7 @@ export const getAllEmployees = async () => {
 export const getEmployeeById = async (id: string) => {
     try {
         const response = await axios.get(`${API_BASE_URL_EMPLOYEES}/${id}`);
-        console.log('Fetched employee:', response.data);
+        // console.log('Fetched employee:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching employee', error);
@@ -87,7 +87,7 @@ export const getEmployeeById = async (id: string) => {
 export const createTicketWithDepartment = async (ticketCreateDTO: TicketCreateDTO) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/department`, ticketCreateDTO);
-        console.log('Created ticket:', response.data);
+        // console.log('Created ticket:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error creating ticket', error);
@@ -113,7 +113,7 @@ export const updateTicketStatus = async (ticketId: string, updateDTO: TicketUpda
 export const deleteAllTickets = async () => {
     try {
         const response = await axios.delete(API_BASE_URL + '/deleteAll');
-        console.log('Deleted all tickets:', response.data);
+        // console.log('Deleted all tickets:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error deleting all tickets', error);
