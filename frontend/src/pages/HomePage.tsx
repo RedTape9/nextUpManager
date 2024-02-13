@@ -98,7 +98,7 @@ function ContactModal(props: ModalProps) {
             <Modal.Body className="grid-example">
                 <Container>
                     <Row>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <Image
                                 src="https://avatars.githubusercontent.com/u/84500134?v=4"
                                 alt="Sergejs avatar"
@@ -107,20 +107,20 @@ function ContactModal(props: ModalProps) {
                                 className="rounded-circle mb-3"
                             />
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={12} md={8}>
                             <p className="fs-4 text-primary">Sergejs Jaudszims</p>
                             <p className="fs-4 text-primary">Backend Entwickler mit Erfindergeist</p>
                             <p className="fs-6 text-primary">Folgen Sie mir über die sozialen Medien</p>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <p className="fs-5 text-primary">E-Mail: <a
                                 href="mailto:ser.jaudszims@gmail.com"><EnvelopeAtFill color="blue" size={32}></EnvelopeAtFill> </a></p>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <p className="fs-5 text-primary">GitHub: <a href="https://github.com/RedTape9"><Github
                                 color="blue" size={32}/></a></p>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <p className="fs-5 text-primary">LinkedIn: <a
                                 href="https://www.linkedin.com/in/sergej-jaudszims-80672a250/"><Linkedin color="blue" size={32}/></a></p>
                         </Col>
