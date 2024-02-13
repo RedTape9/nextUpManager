@@ -203,7 +203,7 @@ const EmployeePage = () => {
                                 </Alert>
                             )}
 
-                            <Card>
+                            <Card className="mb-2">
                                 <Card.Header className="w-auto bg-warning brighter text-center text-danger fs-2">
                                     Danger Zone
                                 </Card.Header>
