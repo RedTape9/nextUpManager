@@ -19,11 +19,6 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    /*private Department applyDepartmentUpdate(Department existingDepartment, DepartmentUpdateNumberDTO updateDTO) {
-        existingDepartment.setCurrentNumber(updateDTO.getCurrentNumber());
-        return departmentRepository.save(existingDepartment);
-    }*/
-
     public List<DepartmentGetForOptionDTO> getAllDepartments() {
         return departmentRepository.findAll().stream()
                 .map(department -> {
