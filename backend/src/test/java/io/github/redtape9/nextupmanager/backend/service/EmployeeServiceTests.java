@@ -1,4 +1,4 @@
-package io.github.redtape9.nextupmanager.backend;
+package io.github.redtape9.nextupmanager.backend.service;
 
 import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForDetailsDTO;
 import io.github.redtape9.nextupmanager.backend.dto.EmployeeGetForOptionDTO;
