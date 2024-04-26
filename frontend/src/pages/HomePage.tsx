@@ -108,7 +108,7 @@ function ContactModal(props: ModalProps) {
                             />
                         </Col>
                         <Col xs={12} md={8}>
-                            <p className="fs-4 text-primary">Sergejs Jaudszims</p>
+                            <p className="fs-4 text-primary">Sergej Jaudszims</p>
                             <p className="fs-4 text-primary">Backend Entwickler mit Erfindergeist</p>
                             <p className="fs-6 text-primary">Folgen Sie mir über die sozialen Medien</p>
                         </Col>
