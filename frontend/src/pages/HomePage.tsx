@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import NavBar from "../components/NavBar.tsx";
 import Footer from "../components/Footer.tsx";
 import {
@@ -17,6 +17,7 @@ import {
 import {BoxArrowInUpRight, EnvelopeAtFill, Github, Linkedin} from 'react-bootstrap-icons';
 import '../styles/colors.css';
 import pic from '../assets/nextUpManager_l.png';
+import {getAllDepartments} from "../service/apiService.ts";
 
 function DescriptionModal(props: ModalProps) {
     return (
@@ -134,6 +135,16 @@ function ContactModal(props: ModalProps) {
     );
 }
 
+
+const fetchDepartments = async () => {
+    try{
+        await getAllDepartments();
+    } catch (error) {
+        console.error('Error fetching departments', error);
+    }
+};
+
+
 const renderTooltip = (props: TooltipProps, tooltipText: string) => (
     <Tooltip id="button-tooltip" {...props} className="bg-primary">
         {tooltipText}
@@ -160,6 +171,11 @@ const HomePage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [contactModalShow, setContactModalShow] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
+
+    // for preloading database data
+    useEffect(() => {
+        fetchDepartments();
+    }, []);
 
     return (
         <>
